@@ -538,7 +538,7 @@ if(args[3] == null){ var autopost = '0';} else { if(args[3].toString() == '1'){v
 				//fs.writeFileSync('buffer_extcommand.txt', '--bank ' + args[1].toString());
 				var whattoexec = 'OPL3MIDRender.bat';
 				if(LoopVaule.toLowerCase() == 'auto'){
-					var opti = 'AUTO';
+					var opti = 'AUTO' + ' "--bank ' + args[1].toString() + '"';
 					var InfoLoop = 'Auto';
 				} else {
 				var opti = '"--play_length=' + (Number(LoopVaule) * 1000) + '" "--bank ' + args[1].toString() + '"';
