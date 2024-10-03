@@ -21,13 +21,13 @@ Also, if you get an update from [Release](https://github.com/HeeminTV/fur2mp3/re
 
 Playback and rendering uses the following libraries/external applications.
 - Furnace: https://github.com/tildearrow/furnace/
-- sidplayfp : https://sourceforge.net/projects/sidplay-residfp/
-- multidumper : https://github.com/maxim-zhao/multidumper/
-- SoX : https://sourceforge.net/projects/sox/
-- normalize : https://neon1.net/prog/normalizer.html
-- FamiStudio : https://famistudio.org/
-- MIDIRenderer : https://github.com/getraid-gg/MIDIRenderer/
-- zxtune123 : https://zxtune.bitbucket.io/
-- YMtoVGM : https://github.com/QuinnPainter/YMtoVGM/
-- midi2vgm : https://github.com/SudoMaker/midi2vgm/
-- corrscope : https://github.com/corrscope/corrscope
+- sidplayfp: https://sourceforge.net/projects/sidplay-residfp/
+- multidumper: https://github.com/maxim-zhao/multidumper/
+- SoX: https://sourceforge.net/projects/sox/
+- normalize: https://neon1.net/prog/normalizer.html
+- FamiStudio: https://famistudio.org/
+- MIDIRenderer: https://github.com/getraid-gg/MIDIRenderer/
+- zxtune123: https://zxtune.bitbucket.io/
+- YMtoVGM: https://github.com/QuinnPainter/YMtoVGM/
+- midi2vgm: https://github.com/SudoMaker/midi2vgm/
+- corrscope: https://github.com/corrscope/corrscope
