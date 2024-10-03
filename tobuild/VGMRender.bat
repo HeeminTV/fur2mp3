@@ -21,11 +21,6 @@ echo ======================시발==================
 REM ping -n 5 127.0.0.1 >nul
 sox-14.4.2\sox.exe -m -v 1 fur2osc\*.wav fur2osc\master\masterout.wav
 
-echo shibal  > ufcksid.tctt
-rem multidumper.exe buffer_vgminput.vgm %* --fade_length=2000
-rem SID2WAV.EXE -t%1 buffer_sid.sid "buffer_fur2wavwav.wav"
-rem rem timeout chingchangchong /t 3 /NOBREAK
-echo FUCK  > ufcksid.tctt
 
 echo Your file has been rendered successfully! > buffer_fur2wavmsg.txt
 goto cn
@@ -54,7 +49,7 @@ echo Creating the `.yaml` file > buffer_oscstatus.txt
 rem normalize.exe -a 8 fur2osc\*.wav
 call seperatedwavsetup.bat
 powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'buffer_vgminput - ','')}"
-corrscope fur2osc\*.wav --audio fur2osc\master\masterout.wav -w
+YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\masterout.wav"
 echo Rendering to an oscilloscope video > buffer_oscstatus.txt 
 rem && rem p
 corrscope masterout.yaml -r buffer_oscout.mp4

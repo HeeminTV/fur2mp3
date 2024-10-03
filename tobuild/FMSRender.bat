@@ -1,5 +1,5 @@
 @echo OFF
-echo fucksidftm > ufcksidvgm.tct
+
 rem if exist furoutput.mp3 (
 del /q buffer_furrendering.txt
 del /q furoutput.mp3
@@ -53,7 +53,7 @@ echo Creating the `.yaml` file > buffer_oscstatus.txt
 rem normalize.exe -a 8 fur2osc\*.wav
 call seperatedwavsetup.bat
 powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'buffer_fmsnsf - ','')}"
-corrscope fur2osc\*.wav --audio fur2osc\master\masterout.wav -w
+call YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\masterout.wav"
 echo Rendering to an oscilloscope video > buffer_oscstatus.txt 
 rem && rem p
 corrscope masterout.yaml -r buffer_oscout.mp4
@@ -61,11 +61,7 @@ corrscope masterout.yaml -r buffer_oscout.mp4
 
 echo Compressing the video > buffer_oscstatus.txt 
 25mb.bat buffer_oscout.mp4 20
-rem echo Done > buffer_oscstatus.txt 
-rem cls
-rem del /q 
-rem rmdir /q furosc
-del /q buffer_*
+
 
 goto exists
 rem )

@@ -2,12 +2,7 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 REM SETLOCAL ENABLEDELAYEDEXPANSION DisableDelayedExpansion
 del /q buffer_vgminput.vgm
-rem if exist buffer_extcommand.txt (
-rem set /p extcmd=<buffer_extcommand.txt
-rem del /q buffer_extcommand.txt
-rem ) else (
-rem set "extcmd="
-rem )
+
 if "%~1" == "AUTO" (
 for /F "delims=" %%I in ('python3 MIDILength.py') do set "duration=%%I"
 REM del /q buffer_mid.ogg

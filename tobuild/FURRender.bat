@@ -59,7 +59,8 @@ IF EXIST buffer_fur2wavosc.txt (
   del /q buffer_oscout.mp4
   echo Creating the `.yaml` file > buffer_oscstatus.txt
   powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'buffer_fur2wavwav_c','Channel #')}"
-  corrscope fur2osc\*.wav --audio fur2osc\master\buffer_fur2oscmst.wav -w
+  call YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\buffer_fur2oscmst.wav"
+
 rem powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'buffer_fur2wavwav_c','Channel ')}"
   echo Rendering to an oscilloscope video > buffer_oscstatus.txt 
   rem && rem p
@@ -73,14 +74,11 @@ rem cls
  rem del /q 
  rem rmdir /q furosc
  del /q buffer_fur2oscmst.yaml && del /q buffer_fur2wavosc.txt && del /q buffer_oscstatus.txt && del /q buffer_oscout.mp4 && del /q buffer_furrendering.txt
-rem echo && rem buffer_fur2oscmst
-  rem goto exists
- rem exit /b
+
  goto exists
  )
 ) ELSE (
-   rem action if the file doesn't exist
-   rem ffmpeg.exe -y -i .\buffer_fur2wavwav.wav -vn -ar 44100 -ac 2 -b:a 192k .\furoutput.mp3
+
    mp3init.bat .\buffer_fur2wavwav.wav
 goto exists
 )
