@@ -8,13 +8,12 @@ const ActivityType = require("discord.js");
 const GatewayIntentBits = require("discord.js");
 const bot = new Discord.Client({ 
 	restRequestTimeout: 60000,
-    //intents: [GatewayIntentBits.Guilds], // up to you
     presence: {
-        activity: {
-            name: 'corrscope.exe',
+       /* activity: {
+            name: 'Mr. Gimmick!',
             type: 'PLAYING'
         },
-        status: 'online',
+        status: 'idle',*/
 		 intents: [
 		 GatewayIntentBits.Guilds, 
 		 GatewayIntentBits.GuildMembers, 
@@ -102,6 +101,41 @@ const settings = {
 bot.on('ready', async () => {
 	 const guild = bot.guilds.cache.get(settings.serverid);
 	 console.log('Ready to render chiptune file formats!');
+	 setInterval(() => {
+     const statusFilePath = 'buffer_oscstatus.txt';
+
+    if (fs.existsSync(statusFilePath)) {
+		if(fs.existsSync('buffer_oscout 20MB.mp4')){//f
+			var percentage1 = getFilesizeInBytes('buffer_oscout 20MB.mp4') / (1024*1024);
+			var percentage2 = percentage1 * 5;
+			var percentage4 = percentage2.toString().substr(0, 5) + '%';
+			var statusMessage = fs.readFileSync(statusFilePath, 'utf8').trim() + ' ' + percentage4.toString();//);
+			
+		} else {
+			var statusMessage = fs.readFileSync(statusFilePath, 'utf-8').trim();
+			
+		}
+
+        bot.user.setPresence({
+            activity: { name: statusMessage, type: 'WATCHING' },
+			status: 'dnd'
+        });
+    } else {
+        const defaultStatus = "corrscope.exe";
+        bot.user.setPresence({
+            activity: { name: defaultStatus, type: 'PLAYING' }, // 기본적으로 "Playing Mr. Gimmick!"으로 설정
+			status: 'idle'
+        });
+    }
+}, 20000);  // 20초마다 실행
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 });
 bot.on("message", async function(message) {
     // message 작성자가 봇이면 그냥 return
@@ -373,9 +407,8 @@ const supportedfileformats = supportedfileformats2.filter((element, index) => {
 				if( message.attachments.first().size > midiMaxSize){message.channel.send(userPing + ' Your file is too big! Maximum size is `' + (midiMaxSize / 1000) + 'KB` in MIDI mode!');return;
 				} else {
 					//if(AttachmentName.toLowerCase().endsWith('.rmi')){ var rmi = 1;} else { var rmi = 0;}
-					if(args[1] == null || args[1] == '-1'){ var RenderMode = 6;} else if(isNaN(args[1])){ message.channel.send('isnanerror;');return;} //vae
-					//else if(args[1] == '-1'){var midmode = 1;}
-					else if(Number(args[1].replaceAll('.', '')) >= 78 || Number(args[1].replaceAll('.', '')) <= -2){ message.channel.send('banknumberwrong');return;
+					if(args[1] == null || args[1] == '-1'){ var RenderMode = 6;} else if(isNaN(args[1])){ message.channel.send(userPing + ' ' + VauleWrong1 + 'OPL3 Bank' + VauleWrong2 + '\nMust be a number!');return;}
+					else if(Number(args[1].replaceAll('.', '')) >= 78 || Number(args[1].replaceAll('.', '')) <= -2){ message.channel.send(userPing + ' ' + VauleWrong1 + 'OPL3 Bank' + VauleWrong2);return;
 					} else { var RenderMode = 7;}
 			
 				}
@@ -444,32 +477,18 @@ const supportedfileformats = supportedfileformats2.filter((element, index) => {
 					message.channel.send(userPing + ' ' + VauleWrong1 + 'Subsong' + VauleWrong2 + '\nMust be a number!');
 					return;
 				//}
+			} else if(Number(args[1]) <= 0){
+				if(RenderMode == '7'){
+					var SubsongVaule = args[1];	
+					var InfoSubs = args[1];
+				} else {
+					message.channel.send(userPing + ' ' + VauleWrong1 + 'Subsong' + VauleWrong2 + '\nMinimum number is `1`!');
+					return;
+				}
 			} else {
-				//if(RenderMode == '1'){
-					if(Number(args[1]) <= 0){
-						message.channel.send(userPing + ' ' + VauleWrong1 + 'Subsong' + VauleWrong2 + '\nMinimum number is `1`!');
-						return;
-					/*} else if(Number(args[0]) >= 5){
-						message.channel.send(userPing + ' ' + VauleWrong1 + 'Loops / Length' + VauleWrong2 + '\nMaximum number is `4`!';
-						return;*/
-					} else {
-						var SubsongVaule = args[1];
-						var FurSubsongVaule = (Number(args[1]) - 1);
-						var InfoSubs = args[1];
-					}
-				/*} else {
-					if(!RenderMode == '7'){
-						if(Number(args[0]) <= 0){
-							message.channel.send(userPing + ' ' + VauleWrong1 + 'Loops / Length' + VauleWrong2 + '\nMinimum number is `1`!';
-							return;
-						} else if(Number(args[0]) >= 601){
-							message.channel.send(userPing + ' ' + VauleWrong1 + 'Loops / Length' + VauleWrong2 + '\nMaximum number is `600`!';
-							return;
-						} else {
-							var LoopVaule = args[0];
-						}
-					}
-				}*/
+				var SubsongVaule = args[1];
+				var FurSubsongVaule = (Number(args[1]) - 1);
+				var InfoSubs = args[1];
 			}
 // else subs = arg[1].toString();}//}
 if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ').includes("'")){ message.channel.send(usage, {split:true});return;}//|||
