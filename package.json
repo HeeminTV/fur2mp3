@@ -1,7 +1,7 @@
 {
   "name": "fur2mp3",
-  "version": "1.0.1",
-  "description": "A powerful Discord bot that renders almost every chiptune formats!",
+  "version": "1.0.2",
+  "description": "A powerful Discord bot that renders almost every chiptune format!",
   "main": "build\\index.js",
   "dependencies": {
     "abort-controller": "^3.0.0",
