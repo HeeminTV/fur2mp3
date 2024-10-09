@@ -1,18 +1,14 @@
 	@echo OFF
 	setlocal enabledelayedexpansion 
-timeout /t 3 /NOBREAK
-del /q buffer_midouta.wav
 
 if exist "buffer_mid.mid" (
-echo Your file has been rendered successfully! > buffer_fur2wavmsg.txt
-echo SHIT > buffer_furrendering.txt
-rem ----------------
-IF EXIST buffer_fur2wavosc.txt (
+
+IF EXIST buffer_osccodec.txt (
 rmdir /S /q fur2osc
 mkdir fur2osc && mkdir fur2osc\master
 
-   del /q "buffer_oscout 20MB.mp4"
-   echo Creating an audio channel > buffer_oscstatus.txt 
+   rem del /q "output_buffer_oscout 20MB.mp4"
+   echo Rendering to an audio file > buffer_furrendering.txt 
 
 )
 if exist "buffer_sf2.sf2" (
@@ -33,27 +29,25 @@ del /q buffer_furrendering.txt
 exit /b
 
 :cn
-IF EXIST buffer_fur2wavosc.txt (
+IF EXIST buffer_osccodec.txt (
 if not exist "buffer_mid.OGG" (
+echo `midirenderer.exe` did not create the `.ogg` file. This is probably because the file is corrupted or the `.mid` file is too long. > buffer_fur2mp3error.txt && goto exists
 
- goto exists
+
 )
-if not exist "buffer_mid.ogg" (
-goto exists
-REM 0Z
-)
+
 
 oggdec.exe -w buffer_midouta.wav .\buffer_mid.ogg
 
   del /q buffer_oscout.mp4
 
-  echo Rendering to an oscilloscope video > buffer_oscstatus.txt 
+  echo Rendering to an oscilloscope video > buffer_furrendering.txt 
 
   corrscope MIDRenderConfig.yaml -r buffer_oscout.mp4
 
-  echo Compressing the video > buffer_oscstatus.txt 
+  REM echo Compressing the video > buffer_furrendering.txt 
   25mb.bat buffer_oscout.mp4 20
-  echo Done > buffer_oscstatus.txt 
+  echo Done > buffer_furrendering.txt 
 rem cls
  rem del /q 
  rem rmdir /q furosc
@@ -65,7 +59,6 @@ del /q buffer_*
 ) ELSE (
    rem action if the file doesn't exist
    if exist "buffer_mid.ogg" (
-  rem ffmpeg.exe -y -i buffer_mid.ogg -vn -ar 44100 -ac 2 -b:a 192k .\furoutput.mp3
    mp3init.bat buffer_mid.ogg
    )
 goto exists

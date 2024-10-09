@@ -1,4 +1,4 @@
-
+bot.login(settings.token);
 const {exec} = require('child_process');
 const fs = require('fs');
 const {floor} = require('mathjs');
@@ -102,7 +102,7 @@ bot.on('ready', async () => {
 	 const guild = bot.guilds.cache.get(settings.serverid);
 	 console.log('Ready to render chiptune file formats!');
 	 setInterval(() => {
-     const statusFilePath = 'buffer_oscstatus.txt';
+     const statusFilePath = 'buffer_furrendering.txt';
 
     if (fs.existsSync(statusFilePath)) {
 		if(fs.existsSync('buffer_oscout 20MB.mp4')){//f
@@ -140,6 +140,9 @@ bot.on('ready', async () => {
 bot.on("message", async function(message) {
     // message 작성자가 봇이면 그냥 return
     if (message.author.bot) return;
+	/*if (!message.author.username == 'heeminheemin') { message.channel.send('has been disabled for a while'); return;} else {
+		message.channel.send(message.author.username);
+	}*/
     // message 시작이 prefix가 아니면 return
     if (!message.content.startsWith(prefix)) return;
 
@@ -148,30 +151,48 @@ bot.on("message", async function(message) {
     const command = args.shift().toLowerCase();
     
    // if (command === "test99999999999999") {
-	   if (command === fur2mp3) {
+	    if (command === fur2mp3) {
+			    let TargetMessage = {};
+
+    // 메시지가 답장 메시지인지 확인
+if (message.attachments.size > 0) {
+    // 먼저 답장한 메시지에서 첨부파일을 확인
+    TargetMessage.attachments = message.attachments;
+} else if (message.reference) {
+    // 답장당한 메시지가 있으면 해당 메시지에서 첨부파일을 확인
+    const repliedMessage = await message.channel.messages.fetch(message.reference.messageID);
+    
+
+    TargetMessage.attachments = repliedMessage.attachments;
+
+} else {
+	TargetMessage.attachments = message.attachments;
+}
+
+
 		   var userPing = '<@' + message.author.id + '>';
 		//시발 그럼 가볼까ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
 		
 		
-			  const filePath = 'buffer_furrendering.txt';
+			const filePath = 'buffer_furrendering.txt';
     
     if (fs.existsSync(filePath)) {
-		if(fs.existsSync('buffer_oscstatus.txt')){
-			if(fs.existsSync('buffer_oscout 20MB.mp4')){//f
-			var percentage1 = getFilesizeInBytes('buffer_oscout 20MB.mp4') / (1024*1024);
+		if(fs.existsSync('buffer_osccodec.txt')){
+			if(fs.existsSync('output_buffer_oscout 20MB.mp4')){//f
+			var percentage1 = getFilesizeInBytes('output_buffer_oscout 20MB.mp4') / (1024*1024);
 			var percentage2 = percentage1 * 5;
 			var percentage3 = percentage1 * 4;
 			if(Number(percentage3) > 100){ var percentage4 = 'Your file will probably be compressed again, as it is larger than **25MB**...'} else { var percentage4 = percentage2.toString().substr(0, 5) + '%';}
-			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\nStatus: ' + fs.readFileSync('buffer_oscstatus.txt', 'utf8').slice(0, -4) + '... ' + percentage4.toString());
+			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\nStatus: ' + fs.readFileSync('buffer_furrendering.txt', 'utf8').trim() + '... ' + percentage4.toString());
+			return;
+			} else {
+			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\nStatus: ' + fs.readFileSync('buffer_furrendering.txt', 'utf8').trim() + '...');////.slice() + '...');//'
 			return;
 			}
-			else {
-			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\nStatus: ' + fs.readFileSync('buffer_oscstatus.txt', 'utf8').slice(0, -4) + '...');////.slice() + '...');//'
-			return;}
+		} else {
+			message.channel.send(userPing + ' Another file is being processed! Please wait!');
+			return;
 		}
-		else {
-        message.channel.send(userPing + ' Another file is being processed! Please wait!');
-        return;}
     }
 	var opti = '';
 	const supportedfurformats = [".fur", ".dmf", ".mod", ".s3m", ".xm", ".it", ".fc13", ".fc14", ".smod", ".fc", ".ftm", ".0cc", ".dnm", ".eft", ".fub", ".tfe"];
@@ -330,13 +351,6 @@ bot.on("message", async function(message) {
   ...supportedidkformats,
  // ...supportedzxtformatsFUCKINGW
 ];
-//const su
-	//const supportedfileformats = '".fur", ".dnm", ".ftm", ".0cc", ".dmf", ".xm", ".mod", ".sid", ".vgm", ".nsf"';
-	//const supportedfileformats = [".fur", ".dnm", ".ftm", ".0cc", ".dmf", ".xm", ".mod", ".sid", ".vgm", ".nsf", ".ay", ".gbs", ".gym", ".hes", ".kss", ".nsfe", ".sap", ".sfm", ".sgc", ".vgz", ".spu", ".s3m", ".it", ".fc13", ".fc14", ".smod", ".fc", ".eft", ".fub", ".tfe", ".fms", ".spc"];
-	//let arr1 = [1, 2, 3, 4, 5];
-//let arr2 = [3, 4, 6];
-
-// arr2에 있는 값들을 arr1에서 제거
 let supportedzxtformats = WillBeFilteredZXT.filter(item => !WithOutZXT.includes(item));
 //message.channel.send('```\n' + supportedzxtformats + '```\n```' + supportedzxtformatsFUCKINGW + '```');
 //console.log(filteredArr); // [1, 2, 5]
@@ -377,13 +391,13 @@ const supportedfileformats = supportedfileformats2.filter((element, index) => {
 	const MaxLength = 601;
 	if(!args[0] == ''){if(args[0].toString().toUpperCase() == 'RESEND'){
 		
-				if(!fs.existsSync('buffer_furresendcooldown.txt')){fs.appendFileSync('buffer_furresendcooldown.txt',unixTimestamp().toString());}//}
+				if(!fs.existsSync('buffer_furresendcooldown.txt')){fs.appendFileSync('buffer_furresendcooldown.txt',(Number(unixTimestamp()) - 1).toString());}//}
 				var readfromfurcooldown = fs.readFileSync('buffer_furresendcooldown.txt');
 				//if( 150 100
 				if(Number(readfromfurcooldown) >= Number(unixTimestamp())){message.channel.send(userPing + ' Please wait for **' + (Number(readfromfurcooldown) - Number(unixTimestamp())) + '** seconds!');return;}// else {fs.writeFileSync('buffer_furresendcooldown.txt','0');}//nr}
 				var sendFilelist = [];
 				//message.channel.send('```\n' + Number(readfromfurcooldown) + Number(unixTimestamp()) + '```\n```' + (Number(fs.readFileSync('buffer_furresendcooldown.txt')) - Number(unixTimestamp())) + '```');
-				if(fs.existsSync('furoutput.mp3')){ sendFilelist.push('furoutput.mp3');}if(fs.existsSync('buffer_oscout 20MB.mp4')){ sendFilelist.push('buffer_oscout 20MB.mp4');}
+				if(fs.existsSync('output_furoutput.mp3')){ sendFilelist.push('output_furoutput.mp3');}if(fs.existsSync('output_buffer_oscout 20MB.mp4')){ sendFilelist.push('output_buffer_oscout 20MB.mp4');}
 				
 									if(!sendFilelist.length == 0){	try{ message.channel.send(userPing + ' Sending...'); await message.channel.send(userPing + ' ',{ files: sendFilelist }); fs.writeFileSync('buffer_furresendcooldown.txt', (Number(unixTimestamp()) + Fur2mp3ResendCooldown).toString());return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}fs.writeFileSync('buffer_furresendcooldown.txt', Number(unixTimestamp()) + 30);return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}
 					//else {return;}
@@ -391,20 +405,20 @@ const supportedfileformats = supportedfileformats2.filter((element, index) => {
 }}//if (['1','3','5','7','9'].some(char => profileID.endsWith(char))) {
   //...
 //}
-	    if(message.attachments.first()){
-			//if(!multiSearchOr(message.attachments.first().name.toLowerCase(), supportedfileformats) )
-				if (!supportedfileformats.some(char => message.attachments.first().name.toLowerCase().endsWith(char)))//)// {
+	    if(TargetMessage.attachments.first()){
+			//if(!multiSearchOr(TargetMessage.attachments.first().name.toLowerCase(), supportedfileformats) )
+				if (!supportedfileformats.some(char => TargetMessage.attachments.first().name.toLowerCase().endsWith(char)))//)// {
   //...
 //}
 				{ message.channel.send(userPing + ' Invalid file format! Only `' + supportedfileformats.join(' ') + '` files are allowed!'); return;}//checks if an attachment is sent
 
-			var AttachmentName = await message.attachments.first().name;//".ftm", ".dnm", ".0cc", ".fur", ".mod", ".xm", ".dmf", ".sid", ".vgm", ".nsf", ".spc"
+			var AttachmentName = await TargetMessage.attachments.first().name;//".ftm", ".dnm", ".0cc", ".fur", ".mod", ".xm", ".dmf", ".sid", ".vgm", ".nsf", ".spc"
 			if(AttachmentName.toLowerCase().endsWith('.sid')) { var RenderMode = 2;} 
 			else if(AttachmentName.toLowerCase().endsWith('.fms')) { var RenderMode = 4; }
 			
 			else if(AttachmentName.toLowerCase().endsWith('.mid')){// || AttachmentName.toLowerCase().endsWith('.rmi')) { 
 				//var sidmode = 0; var vgmmode = 0; var fmsmode = 0; //var midmode = 1;
-				if( message.attachments.first().size > midiMaxSize){message.channel.send(userPing + ' Your file is too big! Maximum size is `' + (midiMaxSize / 1000) + 'KB` in MIDI mode!');return;
+				if( TargetMessage.attachments.first().size > midiMaxSize){message.channel.send(userPing + ' Your file is too big! Maximum size is `' + (midiMaxSize / 1000) + 'KB` in MIDI mode!');return;
 				} else {
 					//if(AttachmentName.toLowerCase().endsWith('.rmi')){ var rmi = 1;} else { var rmi = 0;}
 					if(args[1] == null || args[1] == '-1'){ var RenderMode = 6;} else if(isNaN(args[1])){ message.channel.send(userPing + ' ' + VauleWrong1 + 'OPL3 Bank' + VauleWrong2 + '\nMust be a number!');return;}
@@ -510,8 +524,11 @@ var result = [
 //message.channel.send(id3tag);
 fs.writeFileSync('buffer_fur2mp3id3title.txt', id3tag);
 if(args[3] == null){ var autopost = '0';} else { if(args[3].toString() == '1'){var autopost = '1';} else { var autopost = '0'; }}//if(isNaN(args[3].toString()))
-	if(!fs.existsSync('buffer_furrendering.txt')){fs.appendFileSync('buffer_furrendering.txt', 'SHUBAL');}
-				message.channel.send('Uploading...');if(fs.existsSync('norender.txt')){fs.unlinkSync('norender.txt');}
+	//if(!fs.existsSync('buffer_furrendering.txt')){fs.appendFileSync('buffer_furrendering.txt', 'MP3RenderingMode');}
+				const sentMessage = await message.channel.send('Uploading...');
+				execSync('fur2mp3reset.bat');
+				execSync('del /q output_*');
+				//if(fs.existsSync('buffer_norender.txt')){fs.unlinkSync('buffer_norender.txt');}
 
 
 			
@@ -535,7 +552,7 @@ if(args[3] == null){ var autopost = '0';} else { if(args[3].toString() == '1'){v
 			} else if(RenderMode == '8'){
 				//var opti = '';
 				var whattoexec = 'ZXTRender.bat';
-				var fname = message.attachments.first().name;
+				var fname = TargetMessage.attachments.first().name;
 				var ext1 = fname.toString().split('.');//var sendfilelist = ['zxtzxt.mp3'];
 				var ext2 = ext1.pop();
 				var options = {filename: 'buffer_zxt.' + ext2};//};
@@ -546,9 +563,9 @@ if(args[3] == null){ var autopost = '0';} else { if(args[3].toString() == '1'){v
 				var whattoexec = 'MIDRender.bat';
 				var opti = '';
 				var options = {filename: "buffer_mid.mid"};//if(rmi == 1){var options = {filename: "buffer_mid.rmi"};}else{var options = {filename: "buffer_mid.mid"};}
-				if(message.attachments.array()[1] && message.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){//if(message.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){
+				if(TargetMessage.attachments.array()[1] && TargetMessage.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){//if(TargetMessage.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){
 					if(fs.existsSync('buffer_sf2.sf2')){fs.unlinkSync('buffer_sf2.sf2');}
-					var sfsf = message.attachments.array()[1].name.toString();
+					var sfsf = TargetMessage.attachments.array()[1].name.toString();
 					var sfav = 1;
 				} else { var sfsf = 'SC-55.sf2';} //else
 				
@@ -580,36 +597,31 @@ if(args[3] == null){ var autopost = '0';} else { if(args[3].toString() == '1'){v
 			
 			//message.channel.send('```\n' + vgmmode + '```');
 			//await message.channel.send('```\n' + opti + whattoexec + 'fuk\n\n' + options + '```');
-			if(fs.existsSync('buffer_osccodec.txt')){fs.unlinkSync('buffer_osccodec.txt');}
-			await get(message.attachments.first().url,options);
-			/*if(rmi == 1){  	await execSync('rmi2mid\\rmi2mid.exe ' + options.filename + ' ' + options.filename.slice(0, -4) + '.mid', (error, stdout, stderr) => {
-				//);
-message.channel.send('rmi2mid\\rmi2mid.exe ' + options.filename + ' ' + options.filename.slice(0, -4) + '.mid');
-			console.error(stdout);});
-			//message.channel.send('python3 rmi2mid.py ' + options.filename + ' ' + options.filename.slice(0, -4) + '.mid');//message.channel.send('call');}
-			}*/if(sfav == 1){//[[[[
-			await get(message.attachments.array()[1].url,{filename: "buffer_sf2.sf2"});}
+			//if(fs.existsSync('buffer_osccodec.txt')){fs.unlinkSync('buffer_osccodec.txt');}
+			await get(TargetMessage.attachments.first().url,options);
+				if(sfav == 1){//[[[[
+			await get(TargetMessage.attachments.array()[1].url,{filename: "buffer_sf2.sf2"});}
 
 					if(args[2] == null){//message.channel.send('asfasf');}
 						//var increasing = '** **'; 
 						var osc = 0;
 						var oscinfo = 'Off';
-					} else if (args[2].toString() == '1' ||args[2].toString() == '2'){//?/||){
-						if(!fs.existsSync('buffer_fur2wavosc.txt')){fs.appendFileSync('buffer_fur2wavosc.txt', 'libx265');}
-			//var increasing = '*** [Rendering Oscilloscope Video]***\n***It could take more than 15 minutes***\n\n```ansi\n[40;31mThis is a beta feature! Everything is[1m [40;31mvery unstable [0m[40;31mso if the conversion is not complete within 24 hours or a small bug occurs, please report that to an administrator![0m```';
-						//var increasing = '** **';
+						
+					} else if (Number(args[2]) >= 0 && Number(args[2]) <= 4){
+
 						var osc = 1; 
-						//if(args[2].toString() == '2' || args[2].toString() == '3'){
-						/*if(args[2].toString() == '3'){
-							var GoogleDriveUploadMode = 1;
-							fs.appendFileSync('norender.txt', 'asdasd');
-							fs.writeFileSync('whothefuckmadethisasshole.fuck.txt', message.author.username + '_' + message.attachments.first().name.toString().replace(' ', '_'));
-						} else */if(args[2].toString() == '2'){
-							fs.writeFileSync('buffer_osccodec.txt', 'libx264');
-							var oscinfo = 'On, H264';
+						if(args[2].toString() == '2'){
+							fs.writeFileSync('buffer_osccodec.txt', 'libx264 true');
+							var oscinfo = 'On, H264, Two-Pass Encoding';
 						} else if(args[2].toString() == '1'){
-							fs.writeFileSync('buffer_osccodec.txt', 'libx265');
-							var oscinfo = 'On, H265';
+							fs.writeFileSync('buffer_osccodec.txt', 'libx265 true');
+							var oscinfo = 'On, H265, Two-Pass Encoding';
+						} else if(args[2].toString() == '4'){
+							fs.writeFileSync('buffer_osccodec.txt', 'libx264 false');
+							var oscinfo = 'On, H264, Single-Pass Encoding';
+						} else if(args[2].toString() == '3'){
+							fs.writeFileSync('buffer_osccodec.txt', 'libx265 false');
+							var oscinfo = 'On, H265, Single-Pass Encoding';
 						}
 					}
 if(osc == 1){
@@ -642,37 +654,56 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 				else if(RenderMode == '7'){ var currentfnncarg = currentvgm + '\n' + currentm2v;}
 				else if(RenderMode == '8'){ var currentfnncarg = currentzxt;}
 				else { var currentfnncarg = currentfnnc;}
-				
-				message.channel.send('Uploaded!\n'+ currentfnncarg + altz + '\nRendering started!' + info);
+					fs.writeFileSync('buffer_furrendering.txt', 'Rendering');
+				await sentMessage.edit(currentfnncarg + altz + '\nRendering started!' + info);
 				//message.channel.startTyping();
 				//await exec('fur2wav.bat buffer_furinput.fur', (error, stdout, stderr) => {
 //let optionsv = {stdio : 'pipe' };//xmessage.channel.send('```\n' + opti + '```');
 //message.channel.send('```\n' + whattoexec + ' ' + opti + '```');
 //await message.channel.send(whattoexec + ' ' + opti.toString());
 					await exec(whattoexec + ' ' + opti.toString(), { stdio: []},(error, stdout, stderr) => { console.error(stderr, stdout,{ split : true});
-					//if(GoogleDriveUploadMode == 1){ authorize().then(uploadFile).catch("error",console.error());}
-					if (error) {
-						//message.channel.send('`A very small error appears to have occurred during the conversion, but the conversion was successful, so you can ignore this message`');
-						//console.error(`Conversion error: ${stderr}`);
-						//return;
-					}
-							exec('fur2mp3reset.bat');
-							if(RenderMode == '8'){ var sendfilelist1 = ["zxtout.mp3"];} else {
-							if(osc == 1){ var sendfilelist1 = ["buffer_oscout 20MB.mp4"];}else{var sendfilelist1 = ["furoutput.mp3"];}}
+							//exec('fur2mp3reset.bat');
+							if(RenderMode == '8'){
+								var sendfilelist1 = ["output_zxtout.mp3"];
+							} else {
+								if(osc == 1){ 
+									var sendfilelist1 = ["output_buffer_oscout 20MB.mp4"];
+								} else {
+									var sendfilelist1 = ["output_furoutput.mp3"];
+								}
+							}
 							
-							if(!fs.existsSync(sendfilelist1.join(''))){if(!fs.existsSync('buffer_fur2mp3error.txt')){message.channel.send(userPing + nofileErr);}else{message.channel.send(userPing + nofileErr + '\nDefined error : ' + fs.readFileSync('buffer_fur2mp3error.txt'));fs.unlinkSync('buffer_fur2mp3error.txt');}if(fs.existsSync('buffer_furrendering.txt')){fs.unlinkSync('buffer_furrendering.txt');}return;}
-							
-
-							//if(fs.existsSync(sendfilelist1.join(''))){
-								if(getFilesizeInBytes(sendfilelist1.join('')) > 25780189){message.channel.send(userPing + nofileErr + '\nCompression failed!');return;}//{ 
-								if(RenderMode == '8'){message.channel.send(userPing + ' ' + gwavs, { files: [ 'zxtout.mp3' ]}); return;} else {
-								message.channel.send(userPing + ' ' + gwavs,{ files: sendfilelist1 });}
-							if(autopost == '1'){ if(!osc == 1){message.guild.channels.cache.get(AutoPostChannelID).send(userPing + ' ' + autopoststring ,{ files: sendfilelist1 });} else { message.channel.send(userPIng + ' Sorry, I can\'t post the Google Drive link at there!');}} return;//}
+							if(!fs.existsSync(sendfilelist1.join(''))){
+								if(!fs.existsSync('buffer_fur2mp3error.txt')){
+									message.channel.send(userPing + nofileErr);
+								} else {
+									message.channel.send(userPing + nofileErr + '\nDefined error : ' + fs.readFileSync('buffer_fur2mp3error.txt'));
+									//fs.unlinkSync('buffer_fur2mp3error.txt');
+								}
+								execSync('fur2mp3reset.bat');
+								return;
+							}
+								if(getFilesizeInBytes(sendfilelist1.join('')) > 25780189){
+									message.channel.send(userPing + nofileErr + '\nCompression failed!');
+									execSync('fur2mp3reset.bat');
+									return;
+								}//{ 
+								if(RenderMode == '8'){
+									message.channel.send(userPing + ' ' + gwavs, { files: [ 'output_zxtout.mp3' ]}); //return;
+								} else {
+									message.channel.send(userPing + ' ' + gwavs,{ files: sendfilelist1 });
+								}
+							if(autopost == '1'){
+								if(!osc == 1){
+									message.guild.channels.cache.get(AutoPostChannelID).send(userPing + ' ' + autopoststring ,{ files: sendfilelist1 });
+								} else { 
+									message.channel.send(userPIng + ' Sorry, I can\'t post the Google Drive link at there!');
+								}
+							} 
+							execSync('fur2mp3reset.bat');
+							return;//}
 	
 				});
-				// if(autopost == '1'){ member.guild.channels.cache.get('1209770698940092426').send(userPing + ' just dropped this awesome work! Come and listen!' ,{ files: ["furoutput.mp3"] });}f
-	//		} else { message.channel.send('Only ``.fur`` files are allowed! Please try again!');
-			//	return;			}
 		} //message.channel. // 파이 이름 ㅍbuffer_furinput.fur'
 		       else { //message.channel.send(userPing + ' Send your file with this command!');
 			   message.channel.send(usage, {split:true});return; //}
@@ -691,4 +722,3 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
         //message.channel.send('shut up' + args);
     }}
 	});
-	bot.login(settings.token);

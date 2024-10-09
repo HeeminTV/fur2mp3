@@ -1,79 +1,50 @@
 @echo off
-
-rem if exist furoutput.mp3 (
-del /q buffer_furrendering.txt
-del /q furoutput.mp3
-rem )	
-rem IF EXIST buffer_fur2wavosc.txt (
-   rem action if file exists
-rem ) ELSE (
-   rem action if the file doesn't exist
-rem )
 if exist "buffer_furinput.fur" (
-echo Error! > buffer_fur2wavmsg.txt
-echo SHIT > buffer_furrendering.txt
-rem ----------------
-IF EXIST buffer_fur2wavosc.txt (
+
+IF EXIST buffer_osccodec.txt (
 rmdir /S /q fur2osc
 mkdir fur2osc && mkdir fur2osc\master
-rem timeout 1 
-rem timeout /t 10 /NOBREAK
-   rem action if file exists
-   del /q "buffer_oscout 20MB.mp4"
-   echo Seperating audio channels > buffer_oscstatus.txt 
+
+   rem del /q "output_buffer_oscout 20MB.mp4"
+   echo Seperating audio channels > buffer_furrendering.txt 
    furnace.exe -noreport %* -outmode perchan -output fur2osc\buffer_fur2wavwav.wav buffer_furinput.fur
+   echo Rendering master audio > buffer_furrendering.txt 
    furnace.exe -noreport %* -output fur2osc\master\buffer_fur2oscmst.wav buffer_furinput.fur
+   if not exist "fur2osc\master\buffer_fur2oscmst.wav" (
+echo `furnace.exe` did not create any `.wav` files. This is probably because the file is corrupted. > buffer_fur2mp3error.txt && goto exists
+)
    
 ) ELSE (
 furnace.exe -noreport %* -output buffer_fur2wavwav.wav buffer_furinput.fur
-
+   if not exist "buffer_fur2wavwav.wav" (
+echo `furnace.exe` did not create the `.wav` file. This is probably because the file is corrupted. > buffer_fur2mp3error.txt && goto exists
+)
 )
 
-if NOT %errorlevel% == 0 ( 
-echo THIS IS FUCKING ERERORRRR RRRRRRRRRRRRRRRRRR > buffer_fur2wavmsg.txt
-goto exists
-)
-echo Your file has been rendered successfully! > buffer_fur2wavmsg.txt
 goto cn
-rem goto exists
+
 ) else (
-rem echo NaN > outputfur.wav
-copy slient.mp3 furoutput.mp3
-rem timeout 1 >nul
-echo The file does not exist! > buffer_fur2wavmsg.txt
+
 goto exists
 )
-:exists
-del /q buffer_*
-
-timeout 1 >nul
-rem del /q "%*"
-rem echo reached >> debug_fur2wav.bat.log
-exit /b
 
 :cn
-IF EXIST buffer_fur2wavosc.txt (
-   rem action if file exists
-  rem corrscope.exe fur2osc/
-  rem  dk이거여씀del /q 'buffer_oscout 20MB.mp4'
+IF EXIST buffer_osccodec.txt (
+
   del /q buffer_oscout.mp4
-  echo Creating the `.yaml` file > buffer_oscstatus.txt
+  echo Creating the `.yaml` file > buffer_furrendering.txt
   powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'buffer_fur2wavwav_c','Channel #')}"
   call YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\buffer_fur2oscmst.wav"
 
 rem powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'buffer_fur2wavwav_c','Channel ')}"
-  echo Rendering to an oscilloscope video > buffer_oscstatus.txt 
+  echo Rendering to an oscilloscope video > buffer_furrendering.txt 
   rem && rem p
   corrscope buffer_fur2oscmst.yaml -r buffer_oscout.mp4
   
 
-  echo Compressing the video > buffer_oscstatus.txt 
+  REM echo Compressing the video > buffer_furrendering.txt 
   25mb.bat buffer_oscout.mp4 20
-  echo Done > buffer_oscstatus.txt 
-rem cls
- rem del /q 
- rem rmdir /q furosc
- del /q buffer_fur2oscmst.yaml && del /q buffer_fur2wavosc.txt && del /q buffer_oscstatus.txt && del /q buffer_oscout.mp4 && del /q buffer_furrendering.txt
+  echo Done > buffer_furrendering.txt 
 
  goto exists
  )
@@ -82,3 +53,7 @@ rem cls
    mp3init.bat .\buffer_fur2wavwav.wav
 goto exists
 )
+
+:exists
+
+exit /b
