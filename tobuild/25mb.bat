@@ -1,16 +1,16 @@
 @echo off
-if not exist buffer_osccodec.txt (
-echo libx265>buffer_osccodec.txt
+if not exist temp_osccodec.txt (
+echo libx265>temp_osccodec.txt
 )
-if exist buffer_norender.txt (
-rem copy norendre.mp4 "buffer_oscout 20MB.mp4"
-copy buffer_oscout.mp4 drivecopy.mp4
+if exist temp_norender.txt (
+rem copy norendre.mp4 "temp_oscout 20MB.mp4"
+REM copy temp_oscout.mp4 drivecopy.mp4
 rem del /q norendre.mp4
-del /q buffer_norender.txt
-	 rem del /q buffer_osccodec.txt
+del /q temp_norender.txt
+	 rem del /q temp_osccodec.txt
 	 exit /b
 	 )
-set /p optionfile=<buffer_osccodec.txt
+set /p optionfile=<temp_osccodec.txt
 for /f "tokens=1,2" %%a in ("%optionfile%") do (
     set codec=%%a
     set twopass=%%b
@@ -22,7 +22,7 @@ SET "output_file=output_%~n1 %~2MB.mp4"
 REM I usually don't see a big difference between two-pass and single-pass... set to anything but "true" to turn off two-pass encoding
 rem SET "twopass=true"
 REM We need a way to do floating point arithmetic in CMD, here is a quick one. Change the path to a location that's convenient for you
-set "mathPath=buffer_Math.vbs"
+set "mathPath=temp_Math.vbs"
 REM Creating the Math VBS file
 REM RMif not exist '%mathPath%' (
  echo Wscript.echo replace^(eval^(WScript.Arguments^(0^)^),",","."^) > %mathPath%
@@ -31,7 +31,7 @@ echo Converting to %target_video_size_MB% MB: "%video%"
 
 rem @echo off
 setlocal
-echo Compressing the video > buffer_furrendering.txt 
+echo Compressing the video > temp_furrendering.txt 
 set file=%~1
 set maxbytesize=25780189
 
@@ -40,15 +40,15 @@ FOR /F "usebackq" %%A IN ('%file%') DO set size=%%~zA
 if %size% LSS %maxbytesize% (
    rem echo.File is ^< %maxbytesize% bytes
         echo.File is ^>= %maxbytesize% bytes
-	 rem del /q buffer_osccodec.txt
-	 copy %~1 "output_buffer_oscout 20MB.mp4" 
-	 rem "buffer_
+	 rem del /q temp_osccodec.txt
+	 copy %~1 "output_temp_oscout 20MB.mp4" 
+	 rem "temp_
 	 exit /b
 rem ) ELSE (
     rem echo.File is ^>= %maxbytesize% bytes
-	rem rem del /q buffer_osccodec.txt
-	rem copy %~1 "buffer_oscout 20MB.mp4" 
-	rem rem "buffer_
+	rem rem del /q temp_osccodec.txt
+	rem copy %~1 "temp_oscout 20MB.mp4" 
+	rem rem "temp_
 	rem exit /b
 )
 endlocal
@@ -110,9 +110,9 @@ ffmpeg ^
     "%output_file%"
     
 rem pause
-rem rem del /q buffer_osccodec.txt
+rem rem del /q temp_osccodec.txt
 exit /b
-rem rem del /q buffer_osccodec.txt
+rem rem del /q temp_osccodec.txt
 GOTO :EOF
 
 :Math

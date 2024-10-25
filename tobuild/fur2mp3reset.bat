@@ -1,1 +1,1 @@
-del /q buffer_*
+del /q temp_*

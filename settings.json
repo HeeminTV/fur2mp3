@@ -1,0 +1,10 @@
+{
+    "settings": {
+        "token": "YOUR_BOT_TOKEN",
+        "prefix": "$",
+        "commandName": "fur2mp3",
+		"Fur2mp3ResendCooldown": "60",
+		"midiMaxSize": "200000",
+		"defaultStatus": "corrscope.exe"
+    }
+}

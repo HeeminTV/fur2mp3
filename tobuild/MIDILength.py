@@ -1,3 +1,4 @@
 from mido import MidiFile
-mid = MidiFile('buffer_vgmmidi.mid')
+import sys
+mid = MidiFile(sys.argv[1])
 print(int(mid.length))

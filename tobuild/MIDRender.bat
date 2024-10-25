@@ -1,65 +1,50 @@
-	@echo OFF
-	setlocal enabledelayedexpansion 
-
-if exist "buffer_mid.mid" (
-
-IF EXIST buffer_osccodec.txt (
-rmdir /S /q fur2osc
-mkdir fur2osc && mkdir fur2osc\master
-
-   rem del /q "output_buffer_oscout 20MB.mp4"
-   echo Rendering to an audio file > buffer_furrendering.txt 
-
+@echo on
+setlocal enabledelayedexpansion 
+if not exist "temp_mid.mid" (
+echo Couldn't find `temp_mid.mid` > temp_fur2mp3error.txt && goto exists
 )
-if exist "buffer_sf2.sf2" (
-set sf=buffer_sf2.sf2
+if exist "temp_sf2.sf2" (
+	set sf=temp_sf2.sf2
 ) else (
-set sf=SC-55.sf2
+	set sf=SC-55.sf2
 )
-start /wait /min midirenderer-1.1.3-win64\bin\midirenderer.exe buffer_mid.mid -f !sf!
 
-goto cn
+rem midisplit\src\bin\Release\netcoreapp3.1\win-x64\publish
+rem if exist "temp_mid.mid" (
+:: 사용법 : MIDRender.bat <OPL3 뱅크(-1로 일반 모드 사용)> 
+:: 기본 미디 렌더링 모드에서:
+IF "%~1"=="-1" (
+	echo Rendering `.mid` to `.wav` > temp_furrendering.txt
+	"TiMidity++-2.15.0\timidity.exe" temp_mid.mid --config-string="soundfont %sf%" -Ow
+	if not exist "temp_mid.wav" (
+	echo `timidity.exe` did not create the `.wav` file. This is probably because the file is corrupted. > temp_fur2mp3error.txt && goto exists
+	)
+
+	IF EXIST temp_osccodec.txt (
+	del /q temp_oscout.mp4
+	echo Creating the `.yaml` file > temp_furrendering.txt
+	call YAMLgenerator.bat "temp_mid.wav" "temp_mid.wav"
+	echo Rendering to an oscilloscope video > temp_furrendering.txt 
+
+	corrscope temp_mid.yaml -r temp_oscout.mp4
+	25mb.bat temp_oscout.mp4 20
+	echo Done > temp_furrendering.txt 
+
+	goto exists
+
+	) else (
+	mp3init.bat temp_mid.wav
+	goto exists
+	)
 ) else (
+	for /F "delims=" %%I in ('python3 MIDILength.py temp_mid.mid') do set "duration=%%I"
+	set /a durationout=!duration!*1000 
+	set OPT=--play_length=!durationout!
+	midi2vgm_opl3_windows_x86_64\midi2vgm_opl3.exe --in temp_mid.mid --out temp_vgminput.vgm --bank %~1
 
-goto exists
+	VGMRender.bat %OPT%
+	exit /b
 )
+
 :exists
-del /q buffer_furrendering.txt
-
 exit /b
-
-:cn
-IF EXIST buffer_osccodec.txt (
-if not exist "buffer_mid.OGG" (
-echo `midirenderer.exe` did not create the `.ogg` file. This is probably because the file is corrupted or the `.mid` file is too long. > buffer_fur2mp3error.txt && goto exists
-
-
-)
-
-
-oggdec.exe -w buffer_midouta.wav .\buffer_mid.ogg
-
-  del /q buffer_oscout.mp4
-
-  echo Rendering to an oscilloscope video > buffer_furrendering.txt 
-
-  corrscope MIDRenderConfig.yaml -r buffer_oscout.mp4
-
-  REM echo Compressing the video > buffer_furrendering.txt 
-  25mb.bat buffer_oscout.mp4 20
-  echo Done > buffer_furrendering.txt 
-rem cls
- rem del /q 
- rem rmdir /q furosc
-del /q buffer_*
-
-
- goto exists
- rem )
-) ELSE (
-   rem action if the file doesn't exist
-   if exist "buffer_mid.ogg" (
-   mp3init.bat buffer_mid.ogg
-   )
-goto exists
-)

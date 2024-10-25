@@ -1,3 +1,6 @@
 node_modules
 ignore
 indexbuild
+seperated
+tobuild\OPL3MIDRender.bat
+tobuild\DemucsBAT.bat
