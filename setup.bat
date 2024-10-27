@@ -111,39 +111,40 @@ rem exit /b
 )
 )
 
-if not exist tobuild\midirenderer-1.1.3-win64\midirenderer.exe (
-echo Could not find "midirenderer.exe". Downloading...
+::if not exist tobuild\midirenderer-1.1.3-win64\midirenderer.exe (
+if not exist "TiMidity++-2.15.0\timidity.exe" (
+echo Could not find "timidity.exe". Downloading...
 
 if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/getraid-gg/MIDIRenderer/releases/download/v1.1.3/midirenderer-1.1.3-win64.zip','temp\midirenderer-1.1.3-win64.zip')"
-powershell expand-archive 'temp\midirenderer-1.1.3-win64.zip' 'temp\midirenderer-1.1.3-win64'
-move /y temp\midirenderer-1.1.3-win64\midirenderer-1.1.3-win64\bin tobuild\midirenderer-1.1.3-win64
+powershell "(New-Object System.Net.WebClient).DownloadFile('https://jaist.dl.sourceforge.net/project/timidity/TiMidity%2B%2B/TiMidity%2B%2B-2.15.0/TiMidity%2B%2B-2.15.0-w32.zip?viasf=1','temp\TiMidity++-2.15.0-w32.zip')"
+powershell expand-archive 'temp\TiMidity++-2.15.0-w32.zip' 'temp\TiMidity++-2.15.0-w32'
+move /y temp\TiMidity++-2.15.0-w32 tobuild\TiMidity++-2.15.0
 ) else (
 rem exit /b
 )
 )
 
-if not exist tobuild\oggdec.exe (
-echo Could not find "oggdec.exe". Downloading...
+::if not exist tobuild\oggdec.exe (
+::echo Could not find "oggdec.exe". Downloading...
 
-if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://www.rarewares.org/files/ogg/oggdecV1.10.1.zip','temp\oggdecV1.10.1.zip')"
-powershell expand-archive 'temp\oggdecV1.10.1.zip' 'tobuild'
-) else (
-rem exit /b
-)
-)
+::if /i "!ANSWER!" == "y" (
+::powershell "(New-Object System.Net.WebClient).DownloadFile('https://www.rarewares.org/files/ogg/oggdecV1.10.1.zip','temp\oggdecV1.10.1.zip')"
+::powershell expand-archive 'temp\oggdecV1.10.1.zip' 'tobuild'
+::) else (
+::rem exit /b
+::)
+::)
 
-if not exist tobuild\id3-081w\id3.exe (
-echo Could not find "id3.exe". Downloading...
+::if not exist tobuild\id3-081w\id3.exe (
+::echo Could not find "id3.exe". Downloading...
 
-if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/squell/id3/releases/download/0.81/id3-081w.zip','temp\id3-081w.zip')"
-powershell expand-archive 'temp\id3-081w.zip' 'tobuild\id3-081w'
-) else (
-rem exit /b
-)
-)
+::if /i "!ANSWER!" == "y" (
+::powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/squell/id3/releases/download/0.81/id3-081w.zip','temp\id3-081w.zip')"
+::powershell expand-archive 'temp\id3-081w.zip' 'tobuild\id3-081w'
+::) else (
+::rem exit /b
+::)
+::)
 
 if not exist tobuild\midi2vgm_opl3_windows_x86_64\midi2vgm_opl3.exe (
 echo Could not find "midi2vgm_opl3.exe". Downloading...
@@ -186,7 +187,7 @@ call python3 -m pip install mido
 echo Setup Completed. Now you can close this window and delete this script. (Run "run.bat" instead)
 echo.
 echo You need to config some settings like "bot token".
-echo Open build\index.js on text editor and go to line 52.
+::echo Open build\index.js on text editor and go to line 52.
 ECHO THIS IS THE FIRST TIME USING GITHUB. I HAVE NOT TESTED THIS SCRIPT. You should probably run "npm install" on your cmd
 pause
 exit /b
