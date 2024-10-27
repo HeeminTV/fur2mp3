@@ -1,5 +1,13 @@
 @echo off
 setlocal enabledelayedexpansion
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.settings.GPU) } catch { [Console]::WriteLine('')" }`) do set "GPU=%%A"
+	if "%gpu%"=="1" set "gpu2=h264_nvenc" && set "hwaccel=-hwaccel_output_format cuda"
+	if "%gpu%"=="2" set "gpu2=h264_qsv" && set "hwaccel=-hwaccel_output_format qsv"
+	if "%gpu%"=="3" set "gpu2=h264_amf" && set "hwaccel=-hwaccel_output_format vulkan"
+	if "%gpu%"=="4" set "gpu2=libx264 -preset ultrafast" && set "hwaccel="
+
 set "filename=%~n2"
 set "directory=%~dp2"
 set "required=%~dp1"
@@ -12,7 +20,11 @@ echo.render_ms: 40 >> "%filename%.yaml"
 echo.trigger_subsampling: 1 >> "%filename%.yaml"
 echo.render_subsampling: 2 >> "%filename%.yaml"
 echo.render_subfps: 2 >> "%filename%.yaml"
+if "%~3"=="" (
 echo.amplification: 1.5 >> "%filename%.yaml"
+) else (
+echo.amplification: %~3 >> "%filename%.yaml"
+)
 echo.trigger_stereo: ^^!Flatten SumAvg >> "%filename%.yaml"
 echo.render_stereo: ^^!Flatten SumAvg >> "%filename%.yaml"
 echo.trigger: ^^!CorrelationTriggerConfig >> "%filename%.yaml"
@@ -74,7 +86,19 @@ echo.  antialiasing: true >> "%filename%.yaml"
 echo.  res_divisor: 1.5 >> "%filename%.yaml"
 echo.ffmpeg_cli: ^^!FFmpegOutputConfig >> "%filename%.yaml"
 echo.  path: >> "%filename%.yaml"
-echo.  video_template: -c:v libx264 -crf 18 -preset ultrafast -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
+echo.  video_template: -c:v %gpu2% %hwaccel% -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
+::set "ffmpeg_settings=-c:v libx264 -preset ultrafast -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart"
+::set "filepath=%directory%%filename%.wav"
+
+rem FFmpeg를 사용하여 파일 길이(초 단위) 추출
+::for /f "tokens=1 delims=." %%a in ('ffmpeg -i "%filepath%" 2^>^&1 ^| find "Duration"') do (
+::    for /f "tokens=2 delims=:" %%b in ("%%a") do set /a "hours=%%b*3600"
+::    for /f "tokens=3 delims=:" %%c in ("%%a") do set /a "minutes=%%c*60"
+::    for /f "tokens=4 delims=:" %%d in ("%%a") do set "seconds=%%d"
+::    set /a "video_length=hours + minutes + seconds"
+::)
+::set /a "bitrate=(20600 * 8) / %video_length%"
+::echo.  video_template: %ffmpeg_settings% -b:v %bitrate%k >> "%filename%.yaml"
 rem pause
 echo.master_audio: '%directory%%filename%.wav' >> "%filename%.yaml"
 echo.channels: >> "%filename%.yaml"

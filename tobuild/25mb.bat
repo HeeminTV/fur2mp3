@@ -1,26 +1,71 @@
-@echo off
-if not exist temp_osccodec.txt (
-echo libx265>temp_osccodec.txt
-)
+::chcp 437
+:: =---------------------------------------------------------=
+::                                .::.                                             
+:: =%%%%%:                      +@@@@@@*                                           
+:: %%*                          .%.  .@@                                           
+:: %%%%%%.=%%     #%%  *%%%%%:.....  #@@                                           
+:: %%*    =%%     #%%  %%#   .     +@@@                                            
+:: %%*    =%%     #%%  %%#       -@@@:                                             
+:: %%*    =%%     #%%  %%#      @@@@@@@@+       .                     .-*##*:      
+:: %%*     %%%%%%%%%%  %%#                                         =@@@+-@@@@@.    
+::                              :++++-+%%#: -#%%+.  .+++++-#%%+.    %#  .@@@@@     
+::                 ....        :@@@@@@@@@@@@@@@@@@ .@@@@@@*@@@@@=    .=@@@@@:      
+::                 :-:        .@@@@@-=@@@@@ %@@@@+ @@@@@@ .@@@@@:   %%@@@@@+       
+::                 +*=        @@@@@-:@@@@@.*@@@@# #@@@@@. @@@@@*      -@@@@@       
+::                 %@#       %@@@@+.@@@@@:-@@@@@.*@@@@@=.@@@@@=#@@   +@@@@@.       
+::                 *@@:     =@@@@@ @@@@@:.@@@@@.-@@@@@@@@@@%:  -@@@@@@@@-.         
+::                 .@@@-                .@@@@@ .@@@@@=                             
+::                  .@@@@-            .@@@@@@..@@@@@%                              
+::                    #@@@@@@-....-%@@@@@@@=  =####*                               
+::                      +@@@@@@@@@@@@@@@@-                                         
+::                         .:*@@@@@%=..    
+:: 
+:: art by https://github.com/architectnt
+:: =---------------------------------------------------------=
+@echo ON
 if exist temp_norender.txt (
-rem copy norendre.mp4 "temp_oscout 20MB.mp4"
-REM copy temp_oscout.mp4 drivecopy.mp4
-rem del /q norendre.mp4
-del /q temp_norender.txt
-	 rem del /q temp_osccodec.txt
-	 exit /b
-	 )
-set /p optionfile=<temp_osccodec.txt
-for /f "tokens=1,2" %%a in ("%optionfile%") do (
-    set codec=%%a
-    set twopass=%%b
+copy temp_oscout.mp4 drivecopy.mp4
+exit /b
 )
+if exist temp_osccodec.txt (
+::FUUUUUUUUUUUUUUUUUUUUUUUCLK
+::FUCK
+::WHY ITI WONKT WORK
+	set /p codec=<temp_osccodec.txt
+::)
+) else (
+	set "codec=libx265"
+)
+
+
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.settings.GPU) } catch { [Console]::WriteLine('')" }`) do set "gpu=%%A"
+
+	::set "hwaccel=-hwaccel_output_format vulkan"
+	if "%gpu%"=="1" set "hwaccel=-hwaccel_output_format cuda" && set "gpu3=nvenc"
+	if "%gpu%"=="2" set "hwaccel=-hwaccel_output_format qsv" && set "gpu3=qsv"
+	if "%gpu%"=="3" set "hwaccel=-hwaccel_output_format vulkan" && set "gpu3=amf"
+	if "%gpu%"=="4" set "hwaccel="
+	if "%codec%"=="libx265" (
+		if "%gpu%"=="4" (
+			set "gpu2=libx265"
+		) else (
+			set "gpu2=hevc_%gpu3%"
+		)
+	) else (
+		if "%gpu%"=="4" (
+			set "gpu2=libx264"
+		) else (
+			set "gpu2=h264_%gpu3%"
+		)
+	)
+		
 REM Windows implementation of Marian Minar's answer to "ffmpeg video compression / specific file size" https://stackoverflow.com/a/61146975/2902367
 SET "video=%~1"
 SET "target_video_size_MB=%~2"
 SET "output_file=output_%~n1 %~2MB.mp4"
 REM I usually don't see a big difference between two-pass and single-pass... set to anything but "true" to turn off two-pass encoding
-rem SET "twopass=true"
 REM We need a way to do floating point arithmetic in CMD, here is a quick one. Change the path to a location that's convenient for you
 set "mathPath=temp_Math.vbs"
 REM Creating the Math VBS file
@@ -33,23 +78,14 @@ rem @echo off
 setlocal
 echo Compressing the video > temp_furrendering.txt 
 set file=%~1
-set maxbytesize=25780189
+rem set maxbytesize=25780189
 
 FOR /F "usebackq" %%A IN ('%file%') DO set size=%%~zA
 
-if %size% LSS %maxbytesize% (
-   rem echo.File is ^< %maxbytesize% bytes
-        echo.File is ^>= %maxbytesize% bytes
-	 rem del /q temp_osccodec.txt
+if %size% LSS "25780189" (
 	 copy %~1 "output_temp_oscout 20MB.mp4" 
 	 rem "temp_
 	 exit /b
-rem ) ELSE (
-    rem echo.File is ^>= %maxbytesize% bytes
-	rem rem del /q temp_osccodec.txt
-	rem copy %~1 "temp_oscout 20MB.mp4" 
-	rem rem "temp_
-	rem exit /b
 )
 endlocal
 
@@ -84,35 +120,36 @@ SET "target_video_bitrate=%result%"
 
 echo %target_audio_bitrate% audio, %target_video_bitrate% video
 SET "passString="
-if "%twopass%" == "true" (
-    echo Two-Pass Encoding
+::if "%twopass%" == "true" (
+    ::echo Two-Pass Encoding
     ffmpeg ^
         -y ^
 		-hide_banner -loglevel error ^
+        %hwaccel% ^
         -i "%~1" ^
-        -c:v %codec% ^
+        -c:v %gpu2% ^
         -b:v %target_video_bitrate%k ^
         -pass 1 ^
         -an ^
         -f mp4 ^
         nul
-    SET "passString=-pass 2"
-) else ( echo Single-Pass Encoding )
+::    SET "passString=-pass 2"
+::) else ( echo Single-Pass Encoding )
 ffmpeg ^
+    %hwaccel% ^
     -i "%~1" ^
-    -c:v %codec% ^
+    -c:v %gpu2% ^
     -b:v %target_video_bitrate%k ^
-    %passString% ^
+    -pass 2 ^
 	-y ^
 	-hide_banner -loglevel error ^
-    -c:a aac ^
+    -c:a copy ^
     -b:a %target_audio_bitrate%k ^
     "%output_file%"
     
-rem pause
-rem rem del /q temp_osccodec.txt
+)
+del %temp%\time.js
 exit /b
-rem rem del /q temp_osccodec.txt
 GOTO :EOF
 
 :Math

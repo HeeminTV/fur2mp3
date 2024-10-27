@@ -3,8 +3,9 @@
         "token": "YOUR_BOT_TOKEN",
         "prefix": "$",
         "commandName": "fur2mp3",
-		"Fur2mp3ResendCooldown": "60",
+		"fur2mp3ResendCooldown": "60",
 		"midiMaxSize": "200000",
-		"defaultStatus": "corrscope.exe"
+		"defaultStatus": "corrscope.exe",
+		"GPU": "NVIDEA: 1, INTEL ARC: 2, RADEON: 3"
     }
 }

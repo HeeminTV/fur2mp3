@@ -1,4 +1,4 @@
-@echo on
+@echo off
 setlocal enabledelayedexpansion 
 if not exist "temp_mid.mid" (
 echo Couldn't find `temp_mid.mid` > temp_fur2mp3error.txt && goto exists
@@ -23,7 +23,7 @@ IF "%~1"=="-1" (
 	IF EXIST temp_osccodec.txt (
 	del /q temp_oscout.mp4
 	echo Creating the `.yaml` file > temp_furrendering.txt
-	call YAMLgenerator.bat "temp_mid.wav" "temp_mid.wav"
+	call YAMLgenerator.bat "temp_mid.wav" "temp_mid.wav" 4
 	echo Rendering to an oscilloscope video > temp_furrendering.txt 
 
 	corrscope temp_mid.yaml -r temp_oscout.mp4

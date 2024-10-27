@@ -45,7 +45,7 @@ const {
 } = require('child_process');
 
 const ConfigData = JSON.parse(fs.readFileSync(require('path').join(__dirname, '..', 'settings.json'), 'utf-8'));
-const Fur2mp3ResendCooldown = ConfigData.settings.Fur2mp3ResendCooldown;
+const Fur2mp3ResendCooldown = ConfigData.settings.fur2mp3ResendCooldown;
 const fur2mp3 = ConfigData.settings.commandName;
 const midiMaxSize = ConfigData.settings.midiMaxSize;
 const prefix = ConfigData.settings.prefix;
@@ -128,6 +128,7 @@ bot.on("message", async function(message) {
     
    // if (command === "test99999999999999") {
 	    if (command === fur2mp3) {
+			console.time(); 
 			    let TargetMessage = {};
 
     // 메시지가 답장 메시지인지 확인
@@ -159,10 +160,10 @@ bot.on("message", async function(message) {
 			var percentage2 = percentage1 * 5;
 			var percentage3 = percentage1 * 4;
 			var percentage4 = percentage2.toString().substr(0, 5) + '%';
-			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\nStatus: ' + fs.readFileSync('temp_furrendering.txt', 'utf8').trim() + '... ' + percentage4.toString());
+			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\n> Status: ' + fs.readFileSync('temp_furrendering.txt', 'utf8').trim() + '... ' + percentage4.toString());
 			return;
 			} else {
-			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\nStatus: ' + fs.readFileSync('temp_furrendering.txt', 'utf8').trim() + '...');////.slice() + '...');//'
+			message.channel.send(userPing + ' ' + 'Another file is being processed! Please wait!\n> Status: ' + fs.readFileSync('temp_furrendering.txt', 'utf8').trim() + '...');////.slice() + '...');//'
 			return;
 			}
 		} else {
@@ -517,11 +518,11 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 
 						var osc = 1; 
 						if(args[2].toString() == '2'){
-							fs.writeFileSync('temp_osccodec.txt', 'libx264 true');
-							var oscinfo = 'On, H264, Two-Pass Encoding';
+							fs.writeFileSync('temp_osccodec.txt', 'h264_');
+							var oscinfo = 'On, H264';
 						} else if(args[2].toString() == '1'){
-							fs.writeFileSync('temp_osccodec.txt', 'libx265 true');
-							var oscinfo = 'On, H265, Two-Pass Encoding';
+							fs.writeFileSync('temp_osccodec.txt', 'libx265');
+							var oscinfo = 'On, H265';
 						}
 					}
 if(osc == 1){
@@ -557,7 +558,9 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 				else { var currentfnncarg = currentfnnc; }
 				fs.writeFileSync('temp_furrendering.txt', 'Rendering');
 				await sentMessage.edit(currentfnncarg + altz + '\nRendering started!' + info);
-					await exec(whattoexec + ' ' + opti.toString(), { stdio: []},(error, stdout, stderr) => { console.error(stderr, stdout);
+					await exec(whattoexec + ' ' + opti.toString(), { stdio: []},(error, stdout, stderr) => { 
+							console.error(stderr, stdout);
+							console.timeEnd(); 
 							//exec('fur2mp3reset.bat');
 							if(RenderMode == '8'){
 								var sendfilelist1 = ["output_zxtout.mp3"];
