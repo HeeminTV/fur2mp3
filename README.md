@@ -17,15 +17,15 @@ A powerful Discord bot that renders almost every chiptune format!
 # Configure `settings.json`
 ```json
 {
-    "settings": {
-        "token": "YOUR_BOT_TOKEN",
-        "prefix": "$",
-        "commandName": "fur2mp3",
+	"settings": {
+		"token": "YOUR_BOT_TOKEN",
+		"prefix": "$",
+		"commandName": "fur2mp3",
 		"fur2mp3ResendCooldown": "60",
-	    "midiMaxSize": "200000",
-	    "defaultStatus": "corrscope.exe",
-	    "GPU": "NVIDEA: 1, INTEL ARC: 2, RADEON: 3, OTHERS / SOFTWARE: 4"
-    }
+		"midiMaxSize": "200000",
+		"defaultStatus": "corrscope.exe",
+		"GPU": "NVIDEA: 1, INTEL ARC: 2, RADEON: 3, OTHERS / SOFTWARE: 4"
+	}
 }
 ```
   - `token` : Put your bot's token here
