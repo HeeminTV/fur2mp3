@@ -10,7 +10,7 @@ A powerful Discord bot that renders almost every chiptune format!
   - It downloads other softwares like "[Furnace](https://github.com/tildearrow/furnace)" and "[corrscope](https://github.com/corrscope/corrscope)". (~~not the latest version~~)
 2. Configure a few essentials like bot token ~~and server ID~~
   - ~~Refer to line 52 of `tobuild\index.js`.~~
-  - Go to the section "**Configure `settings.json`**"
+  - Go to the section "[**Configure `settings.json`**](https://github.com/HeeminTV/fur2mp3?tab=readme-ov-file#configure-settingsjson)"
 3. Launch `run.bat` to start the bot.
 # [Usage (Outdated)](https://gimmick32ndanniversary.neocities.org/fur2mp3manual)
 
