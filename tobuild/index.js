@@ -1,48 +1,32 @@
 const fs = require('fs');
 const floor = require('mathjs');
 require('dotenv').config();
-const Discord = require('discord.js');
-const ActivityType = require("discord.js");
-const GatewayIntentBits = require("discord.js");
-const bot = new Discord.Client({ 
-	restRequestTimeout: 60000,
-    presence: {
-       /* activity: {
-            name: 'Mr. Gimmick!',
-            type: 'PLAYING'
-        },
-        status: 'idle',*/
-		 intents: [
-		 GatewayIntentBits.Guilds, 
-		 GatewayIntentBits.GuildMembers, 
-		 Discord.Intents.FLAGS.GUILDS,
-         Discord.Intents.FLAGS.GUILD_MEMBERS
-		 ] 
-		/* ws: {
-        intents: [
-            Discord.Intents.FLAGS.GUILDS,
-            Discord.Intents.FLAGS.GUILD_MEMBERS
-        ]
-    }*/
-}});
+//const { Client, GatewayIntentBits, ActivityType, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, EmbedBuilder, PresenceUpdateStatus } = require('discord.js');
+
+const bot = new Client({ 
+    restRequestTimeout: 60000,
+    intents: [
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMembers, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.MessageContent
+    ]
+});
 
 function getFilesizeInBytes(filename) {
-    var stats = fs.statSync(filename);
-    var fileSizeInBytes = stats.size;
-    return fileSizeInBytes;
+    const stats = fs.statSync(filename);
+    return stats.size;
 }
-  const get = require("async-get-file");
-  const async = require("async");
-  const { EmbedBuilder } = require('discord.js');
-  function unixTimestamp () {  
-  return Math.floor(Date.now() / 1000);
+
+const get = require("async-get-file");
+const async = require("async");
+
+function unixTimestamp() {  
+    return Math.floor(Date.now() / 1000);
 }
-const { 
-  spawnSync, 
-  execSync, 
-  execFileSync,
-  exec
-} = require('child_process');
+
+const { spawnSync, execSync, execFileSync, exec } = require('child_process');
 
 const ConfigData = JSON.parse(fs.readFileSync(require('path').join(__dirname, '..', 'settings.json'), 'utf-8'));
 const Fur2mp3ResendCooldown = ConfigData.settings.fur2mp3ResendCooldown;
@@ -53,9 +37,8 @@ const botToken = ConfigData.settings.token;
 const defaultStatus = ConfigData.settings.defaultStatus;
 
 bot.on('ready', async () => {
-	const guild = bot.guilds.cache.get(settings.serverid);
-	console.log('Ready to render chiptune files!' + 
-	`
+    const guild = bot.guilds.cache.get(ConfigData.settings.serverid); // 서버 ID 가져오기
+    console.log('Ready to render chiptune files!' + `
                                .::.                                             
 =%%%%%:                      +@@@@@@*                                           
 %%*                          .%.  .@@                                           
@@ -73,53 +56,38 @@ bot.on('ready', async () => {
                 .@@@-                .@@@@@ .@@@@@=                             
                  .@@@@-            .@@@@@@..@@@@@%                              
                    #@@@@@@-....-%@@@@@@@=  =####*                               
-                     +@@@@@@@@@@@@@@@@-                                         
-                        .:*@@@@@%=..                                            
-`
-	);
-	setInterval(() => {
-		const statusFilePath = 'temp_furrendering.txt';
+                     +@@@@@@@@@@@@@@@@-                                          
+                        .:*@@@@@%=..                                             
+`);
 
-		if (fs.existsSync('temp_osccodec.txt')) {
-			if(fs.existsSync('temp_oscout 20MB.mp4')){
-				var percentage1 = getFilesizeInBytes('temp_oscout 20MB.mp4') / (1024*1024);
-				var percentage2 = percentage1 * 5;
-				var percentage4 = percentage2.toString().substr(0, 5) + '%';
-				var statusMessage = fs.readFileSync(statusFilePath, 'utf8').trim() + ' ' + percentage4.toString();//);
-				
-			} else {
-				var statusMessage = fs.readFileSync(statusFilePath, 'utf-8').trim();
-				
-			}
+    setInterval(() => {
+        const statusFilePath = 'temp_furrendering.txt';
 
-			bot.user.setPresence({
-				activity: { name: statusMessage, type: 'WATCHING' },
-				status: 'dnd'
-			});
-		} else {
-			//const defaultStatus = "corrscope.exe";
-			bot.user.setPresence({
-				activity: { name: defaultStatus, type: 'PLAYING' },
-				status: 'idle'
-			});
-		}
-	}, 20000);  // 20초마다 실행
-		 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-});
-bot.on("message", async function(message) {
+        if (fs.existsSync('temp_osccodec.txt')) {
+            let statusMessage;
+            if (fs.existsSync('temp_oscout 20MB.mp4')) {
+                const percentage1 = getFilesizeInBytes('temp_oscout 20MB.mp4') / (1024 * 1024);
+                const percentage2 = percentage1 * 5;
+                const percentage4 = percentage2.toFixed(2) + '%';
+                statusMessage = fs.readFileSync(statusFilePath, 'utf8').trim() + ' ' + percentage4;
+            } else {
+                statusMessage = fs.readFileSync(statusFilePath, 'utf-8').trim();
+            }
+
+            bot.user.setPresence({
+                activities: [{ name: statusMessage, type: ActivityType.Watching }],
+                status: 'dnd'
+            });
+        } else {
+            bot.user.setPresence({
+                activities: [{ name: defaultStatus, type: ActivityType.Playing }],
+                status: 'idle'
+            });
+        }
+    }, 20000); // 20초마다 실행
+});bot.on("messageCreate", async function(message) {
     // message 작성자가 봇이면 그냥 return
     if (message.author.bot) return;
-	/*if (!message.author.username == 'heeminheemin') { message.channel.send('has been disabled for a while'); return;} else {
-		message.channel.send(message.author.username);
-	}*/
-    // message 시작이 prefix가 아니면 return
     if (!message.content.startsWith(prefix)) return;
 
     const commandBody = message.content.slice(prefix.length);
@@ -127,24 +95,21 @@ bot.on("message", async function(message) {
     const command = args.shift().toLowerCase();
     
    // if (command === "test99999999999999") {
-	    if (command === fur2mp3) {
-			console.time(); 
-			    let TargetMessage = {};
+	if (command === fur2mp3) {
+	let TargetMessage = {};
 
     // 메시지가 답장 메시지인지 확인
 	if (message.attachments.size > 0) {
-		// 먼저 답장한 메시지에서 첨부파일을 확인
+		// 먼저 현재 메시지에서 첨부파일을 확인
 		TargetMessage.attachments = message.attachments;
 	} else if (message.reference) {
-		// 답장당한 메시지가 있으면 해당 메시지에서 첨부파일을 확인
-		const repliedMessage = await message.channel.messages.fetch(message.reference.messageID);
-		
-
+		// 답장된 메시지가 있는 경우 해당 메시지에서 첨부파일 확인
+		const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
 		TargetMessage.attachments = repliedMessage.attachments;
-
 	} else {
 		TargetMessage.attachments = message.attachments;
 	}
+
 
 
 		   var userPing = '<@' + message.author.id + '>';
@@ -179,98 +144,92 @@ bot.on("message", async function(message) {
 	const supportedvgmformats = [".ay", ".gbs", ".gym", ".hes", ".kss", ".nsf", ".nsfe", ".sap", ".sfm", ".sgc", ".spc", ".vgm", ".vgz", ".spu"];
 	const supportedidkformats = [".sid", ".fms", ".mid", ".ym"];//, ".rmi"];
 	const WillBeFilteredZXT = [
-".asc",
-".ftc",
-".gtr",
-".psc",
-".psg",
-".psm",
-".pt1",
-".pt2",
-".pt3",
-".sqt",
-".stc",
-".st1", // yeah i stole this list fro m AY MACHINE >:)
-".st3",
-".stp",
-".vtx",
-".chi",
-".dmm",
-".dst",
-".et1",
-".pdt",
-".sqd",
-".str",
-".tfc",
-".tfd",
-".tfe",
-".669",
-".amf",
-".dmf",
-".far",
-".fnk",
-".gdm",
-".imf",
-".it",
-".liq",
-".mdl",
-".mtm",
-".ptm",
-".rtm",
-".s3m",
-".stim",
-".stm",
-".stx",
-".ult",
-".xm",
-".dbm",
-".emod",
-".mod",
-".mtn",
-".ims",
-".med",
-".okt",
-".pt36",
-".sfx",
-".ahx",
-".dtm",
-".gtk",
-".tcb",
-".sap",
-".dtt",
-".cop",
-".sid",
-".ayc",
-".spc",
-".mtc",
-".vgm",
-".gym",
-".nsf",
-".nsfe",
-".gbs",
-".gsf",
-".hes",
-".kss"
-];	const WithOutZXT = [
-  ...supportedfurformats,
-  ...supportedvgmformats,
-  ...supportedidkformats,
- // ...supportedzxtformatsFUCKINGW
-];
-let supportedzxtformats = WillBeFilteredZXT.filter(item => !WithOutZXT.includes(item));
-//message.channel.send('```\n' + supportedzxtformats + '```\n```' + supportedzxtformatsFUCKINGW + '```');
-//console.log(filteredArr); // [1, 2, 5]
+	".asc",
+	".ftc",
+	".gtr",
+	".psc",
+	".psg",
+	".psm",
+	".pt1",
+	".pt2",
+	".pt3",
+	".sqt",
+	".stc",
+	".st1", // yeah i stole this list fro m AY MACHINE >:)
+	".st3",
+	".stp",
+	".vtx",
+	".chi",
+	".dmm",
+	".dst",
+	".et1",
+	".pdt",
+	".sqd",
+	".str",
+	".tfc",
+	".tfd",
+	".tfe",
+	".669",
+	".amf",
+	".dmf",
+	".far",
+	".fnk",
+	".gdm",
+	".imf",
+	".it",
+	".liq",
+	".mdl",
+	".mtm",
+	".ptm",
+	".rtm",
+	".s3m",
+	".stim",
+	".stm",
+	".stx",
+	".ult",
+	".xm",
+	".dbm",
+	".emod",
+	".mod",
+	".mtn",
+	".ims",
+	".med",
+	".okt",
+	".pt36",
+	".sfx",
+	".ahx",
+	".dtm",
+	".gtk",
+	".tcb",
+	".sap",
+	".dtt",
+	".cop",
+	".sid",
+	".ayc",
+	".spc",
+	".mtc",
+	".vgm",
+	".gym",
+	".nsf",
+	".nsfe",
+	".gbs",
+	".gsf",
+	".hes",
+	".kss"
+	];	
 
-	const supportedfileformats = [
- /* ...supportedfurformats,
-  ...supportedvgmformats,
-  ...supportedidkformats,*///...supportedfileformats42,
-  ...WithOutZXT,
-  ...supportedzxtformats
-];/*
-const supportedfileformats = supportedfileformats2.filter((element, index) => {
-    return supportedfileformats2.indexOf(element) === index;
-});*/
+	const WithOutZXT = [
+	  ...supportedfurformats,
+	  ...supportedvgmformats,
+	  ...supportedidkformats,
+	 // ...supportedzxtformatsFUCKINGW
+	];
+	let supportedzxtformats = WillBeFilteredZXT.filter(item => !WithOutZXT.includes(item));
+
+		const supportedfileformats = [
+	  ...WithOutZXT,
+	  ...supportedzxtformats
+	];
 	const sendErr = ' An error occurred in the file transfer process. Try `$' + fur2mp3 + ' resend`.';
 	const nofileErr = ' An error occurred during rendering! Try again with other files!';//ua
 	const currentfnnc = 'Current Furnace Tracker Version : **0.6.7**'
@@ -324,9 +283,7 @@ const supportedfileformats = supportedfileformats2.filter((element, index) => {
 									if(!sendFilelist.length == 0){	try{ message.channel.send(userPing + ' Sending...'); await message.channel.send(userPing + ' ',{ files: sendFilelist }); fs.writeFileSync('temp_furresendcooldown.txt', (Number(unixTimestamp()) + Fur2mp3ResendCooldown).toString());return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}fs.writeFileSync('temp_furresendcooldown.txt', Number(unixTimestamp()) + 30);return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}
 					//else {return;}
 } else { message.channel.send(userPing + ' No output files found!');return;}//There are no
-}}//if (['1','3','5','7','9'].some(char => profileID.endsWith(char))) {
-  //...
-//}
+}}
 	    if(TargetMessage.attachments.first()){
 			//if(!multiSearchOr(TargetMessage.attachments.first().name.toLowerCase(), supportedfileformats) )
 				if (!supportedfileformats.some(char => TargetMessage.attachments.first().name.toLowerCase().endsWith(char)))//)// {
@@ -434,7 +391,7 @@ const supportedfileformats = supportedfileformats2.filter((element, index) => {
 // else subs = arg[1].toString();}//}
 if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ').includes("'")){ message.channel.send(usage, {split:true});return;}//|||
 
-				const sentMessage = await message.channel.send('Uploading...');
+				const sentMessage = await message.reply('Downloading...');
 				execSync('fur2mp3reset.bat');
 				execSync('del /q output_*');
 				//if(fs.existsSync('temp_norender.txt')){fs.unlinkSync('temp_norender.txt');}
@@ -546,8 +503,6 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 } else {
 	var info = '\n\nLoops: **' + InfoLoop + '**\nSubsong Number: **' + InfoSubs + '**' + infoid3;
 }
-//} else { var info = '';}
-				//if(!args[0])
 				if(RenderMode == '2'){ var currentfnncarg = currentsid;} //else { var currentfnncarg = currentsid;}
 				else if(RenderMode == '3'){ var currentfnncarg = currentvgm;}
 				else if(RenderMode == '5'){ var currentfnncarg = currentvgm + '\n' + currentym;}
@@ -559,9 +514,7 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 				fs.writeFileSync('temp_furrendering.txt', 'Rendering');
 				await sentMessage.edit(currentfnncarg + altz + '\nRendering started!' + info);
 					await exec(whattoexec + ' ' + opti.toString(), { stdio: []},(error, stdout, stderr) => { 
-							console.error(stderr, stdout);
-							console.timeEnd(); 
-							//exec('fur2mp3reset.bat');
+							console.error(stderr, stdout); 
 							if(RenderMode == '8'){
 								var sendfilelist1 = ["output_zxtout.mp3"];
 							} else {
@@ -576,29 +529,27 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 								if(!fs.existsSync('temp_fur2mp3error.txt')){
 									message.channel.send(userPing + nofileErr);
 								} else {
-									message.channel.send(userPing + nofileErr + '\nDefined error : ' + fs.readFileSync('temp_fur2mp3error.txt'));
-									//fs.unlinkSync('temp_fur2mp3error.txt');
+									message.channel.send(userPing + nofileErr + '\n> Defined error : ' + fs.readFileSync('temp_fur2mp3error.txt'));
 								}
 								execSync('fur2mp3reset.bat');
 								return;
 							}
 								if(getFilesizeInBytes(sendfilelist1.join('')) > 25780189){
-									message.channel.send(userPing + nofileErr + '\nCompression failed!');
+									message.channel.send(userPing + nofileErr + '\n> Defined error : Compression failed!');
 									execSync('fur2mp3reset.bat');
 									return;
 								}//{ 
 								if(RenderMode == '8'){
-									message.channel.send(userPing + ' ' + gwavs, { files: [ 'output_zxtout.mp3' ]}); //return;
+									message.reply({
+										content: gwavs,
+										files: [ 'output_zxtout.mp3' ]
+									});
 								} else {
-									message.channel.send(userPing + ' ' + gwavs,{ files: sendfilelist1 });
+									message.reply({
+										content: gwavs,
+										files: sendfilelist1 
+									});
 								}
-							/*if(autopost == '1'){
-								if(!osc == 1){
-									message.guild.channels.cache.get(AutoPostChannelID).send(userPing + ' ' + autopoststring ,{ files: sendfilelist1 });
-								} else { 
-									message.channel.send(userPIng + ' Sorry, I can\'t post the Google Drive link at there!');
-								}
-							} */
 							execSync('fur2mp3reset.bat');
 							return;//}
 	

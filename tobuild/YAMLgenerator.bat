@@ -21,7 +21,7 @@ echo.trigger_subsampling: 1 >> "%filename%.yaml"
 echo.render_subsampling: 2 >> "%filename%.yaml"
 echo.render_subfps: 2 >> "%filename%.yaml"
 if "%~3"=="" (
-echo.amplification: 1.5 >> "%filename%.yaml"
+echo.amplification: 2 >> "%filename%.yaml"
 ) else (
 echo.amplification: %~3 >> "%filename%.yaml"
 )
@@ -87,19 +87,7 @@ echo.  res_divisor: 1.5 >> "%filename%.yaml"
 echo.ffmpeg_cli: ^^!FFmpegOutputConfig >> "%filename%.yaml"
 echo.  path: >> "%filename%.yaml"
 echo.  video_template: -c:v %gpu2% %hwaccel% -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
-::set "ffmpeg_settings=-c:v libx264 -preset ultrafast -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart"
-::set "filepath=%directory%%filename%.wav"
 
-rem FFmpeg를 사용하여 파일 길이(초 단위) 추출
-::for /f "tokens=1 delims=." %%a in ('ffmpeg -i "%filepath%" 2^>^&1 ^| find "Duration"') do (
-::    for /f "tokens=2 delims=:" %%b in ("%%a") do set /a "hours=%%b*3600"
-::    for /f "tokens=3 delims=:" %%c in ("%%a") do set /a "minutes=%%c*60"
-::    for /f "tokens=4 delims=:" %%d in ("%%a") do set "seconds=%%d"
-::    set /a "video_length=hours + minutes + seconds"
-::)
-::set /a "bitrate=(20600 * 8) / %video_length%"
-::echo.  video_template: %ffmpeg_settings% -b:v %bitrate%k >> "%filename%.yaml"
-rem pause
 echo.master_audio: '%directory%%filename%.wav' >> "%filename%.yaml"
 echo.channels: >> "%filename%.yaml"
 rem setlocal enabledelayedexpansion
@@ -111,5 +99,7 @@ for /f "tokens=*" %%f in ('powershell -command "Get-ChildItem -File %~1 | Sort-O
 	echo.  wav_path: '%required%%%f' >> "%filename%.yaml"
 )
 
-endlocal
+::endlocal
 echo "%filename%.yaml"
+echo video_template: %hwaccel% -c:v %gpu2% -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart
+endlocal
