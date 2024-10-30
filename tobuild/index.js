@@ -144,79 +144,79 @@ bot.on('ready', async () => {
 	const supportedvgmformats = [".ay", ".gbs", ".gym", ".hes", ".kss", ".nsf", ".nsfe", ".sap", ".sfm", ".sgc", ".spc", ".vgm", ".vgz", ".spu"];
 	const supportedidkformats = [".sid", ".fms", ".mid", ".ym"];//, ".rmi"];
 	const WillBeFilteredZXT = [
-	".asc",
-	".ftc",
-	".gtr",
-	".psc",
-	".psg",
-	".psm",
-	".pt1",
-	".pt2",
-	".pt3",
-	".sqt",
-	".stc",
-	".st1", // yeah i stole this list fro m AY MACHINE >:)
-	".st3",
-	".stp",
-	".vtx",
-	".chi",
-	".dmm",
-	".dst",
-	".et1",
-	".pdt",
-	".sqd",
-	".str",
-	".tfc",
-	".tfd",
-	".tfe",
-	".669",
-	".amf",
-	".dmf",
-	".far",
-	".fnk",
-	".gdm",
-	".imf",
-	".it",
-	".liq",
-	".mdl",
-	".mtm",
-	".ptm",
-	".rtm",
-	".s3m",
-	".stim",
-	".stm",
-	".stx",
-	".ult",
-	".xm",
-	".dbm",
-	".emod",
-	".mod",
-	".mtn",
-	".ims",
-	".med",
-	".okt",
-	".pt36",
-	".sfx",
-	".ahx",
-	".dtm",
-	".gtk",
-	".tcb",
-	".sap",
-	".dtt",
-	".cop",
-	".sid",
-	".ayc",
-	".spc",
-	".mtc",
-	".vgm",
-	".gym",
-	".nsf",
-	".nsfe",
-	".gbs",
-	".gsf",
-	".hes",
-	".kss"
-	];	
+		".asc",
+		".ftc",
+		".gtr",
+		".psc",
+		".psg",
+		".psm",
+		".pt1",
+		".pt2",
+		".pt3",
+		".sqt",
+		".stc",
+		".st1", // yeah i stole this list fro m AY MACHINE >:)
+		".st3",
+		".stp",
+		".vtx",
+		".chi",
+		".dmm",
+		".dst",
+		".et1",
+		".pdt",
+		".sqd",
+		".str",
+		".tfc",
+		".tfd",
+		".tfe",
+		".669",
+		".amf",
+		".dmf",
+		".far",
+		".fnk",
+		".gdm",
+		".imf",
+		".it",
+		".liq",
+		".mdl",
+		".mtm",
+		".ptm",
+		".rtm",
+		".s3m",
+		".stim",
+		".stm",
+		".stx",
+		".ult",
+		".xm",
+		".dbm",
+		".emod",
+		".mod",
+		".mtn",
+		".ims",
+		".med",
+		".okt",
+		".pt36",
+		".sfx",
+		".ahx",
+		".dtm",
+		".gtk",
+		".tcb",
+		".sap",
+		".dtt",
+		".cop",
+		".sid",
+		".ayc",
+		".spc",
+		".mtc",
+		".vgm",
+		".gym",
+		".nsf",
+		".nsfe",
+		".gbs",
+		".gsf",
+		".hes",
+		".kss"
+		];	
 
 	const WithOutZXT = [
 	  ...supportedfurformats,
@@ -286,12 +286,9 @@ bot.on('ready', async () => {
 }}
 	    if(TargetMessage.attachments.first()){
 			//if(!multiSearchOr(TargetMessage.attachments.first().name.toLowerCase(), supportedfileformats) )
-				if (!supportedfileformats.some(char => TargetMessage.attachments.first().name.toLowerCase().endsWith(char)))//)// {
-  //...
-//}
-				{ message.channel.send(userPing + ' Invalid file format! Only `' + supportedfileformats.join(' ') + '` files are allowed!'); return;}//checks if an attachment is sent
+			if (!supportedfileformats.some(char => TargetMessage.attachments.first().name.toLowerCase().endsWith(char))){ message.channel.send(userPing + ' Invalid file format! Only `' + supportedfileformats.join(' ') + '` files are allowed!'); return;}//checks if an attachment is sent
 
-			var AttachmentName = await TargetMessage.attachments.first().name;//".ftm", ".dnm", ".0cc", ".fur", ".mod", ".xm", ".dmf", ".sid", ".vgm", ".nsf", ".spc"
+			var AttachmentName = await TargetMessage.attachments.first().name;
 			if(AttachmentName.toLowerCase().endsWith('.sid')) { var RenderMode = 2;} 
 			else if(AttachmentName.toLowerCase().endsWith('.fms')) { var RenderMode = 4; }
 			
@@ -330,7 +327,7 @@ bot.on('ready', async () => {
 						return;
 					} else {
 						var FurLoopVaule = args[0];
-						var InfoLoop = args[0];
+						var InfoLoop = args[0] = '0' ? 'FUCK' : args[0];
 					}
 				} else if(RenderMode == '6'){
 					if(Number(args[0]) <= -2){
