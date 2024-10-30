@@ -327,7 +327,7 @@ bot.on('ready', async () => {
 						return;
 					} else {
 						var FurLoopVaule = args[0];
-						var InfoLoop = args[0] = '0' ? 'FUCK' : args[0];
+						var InfoLoop = args[0] = '0' ? 'No Loops' : args[0];
 					}
 				} else if(RenderMode == '6'){
 					if(Number(args[0]) <= -2){
@@ -366,9 +366,6 @@ bot.on('ready', async () => {
 					var InfoSubs = SubsongVaule;
 				}
 			} else if(isNaN(args[1])){
-				//if(!RenderMode == '7' || !args[0].toLowerCase() == 'auto'){
-					
-				//} else {
 					message.channel.send(userPing + ' ' + VauleWrong1 + 'Subsong' + VauleWrong2 + '\nMust be a number!');
 					return;
 				//}
@@ -391,15 +388,10 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 				const sentMessage = await message.reply('Downloading...');
 				execSync('fur2mp3reset.bat');
 				execSync('del /q output_*');
-				//if(fs.existsSync('temp_norender.txt')){fs.unlinkSync('temp_norender.txt');}
 
-
-			
 			if(RenderMode == '2'){
 				var options = {filename: "temp_sid.sid"};//var options = {
 				var whattoexec = 'SIDRender.bat';
-				/*if(args[0] == null){var optis = 180;} else { if(isNaN(args[0])){var optis = 180;} else { var optis = Number(args[0]);}}
-				var opti = '-t' + optis + ' -o' + sidsubs;*/
 				var opti = '-t' + LoopVaule + ' -o' + SubsongVaule;
 				
 			} else if(RenderMode == '3'){
@@ -435,19 +427,7 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 				} else {
 					var sfsf = 'SC-55.sf2';
 				}
-				
-			/*} else if(RenderMode == '7'){ 
-				var whattoexec = 'OPL3MIDRender.bat';
-				if(LoopVaule.toLowerCase() == 'auto'){
-					var opti = 'AUTO' + ' "--bank ' + args[1].toString() + '"';
-					var InfoLoop = 'Auto';
-				} else {
-				var opti = '"--play_length=' + (Number(LoopVaule) * 1000) + '" "--bank ' + args[1].toString() + '"';
-				var InfoLoop =  LoopVaule + ' Seconds';
-				}
-				var options = {filename: "temp_vgmmidi.mid"};//}//if(rmi == 1){var options = {filename: "temp_vgmmidi.rmi"};}else{var options = {filename: "temp_vgmmidi.mid"};}}
-			
-			*/
+
 			} else if(RenderMode == '5'){
 				var whattoexec = 'YMRender.bat';
 				var opti = '--play_length=' + (Number(LoopVaule) * 1000);
@@ -479,28 +459,28 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 							var oscinfo = 'On, H265';
 						}
 					}
-if(osc == 1){
-	var infoid3 = '\nOscilloscope Video Rendering: **' + oscinfo + '**'; 
-	var altz = '\n' + currentcrr;
-} else { 
-	var infoid3 = '\nOscilloscope Video Rendering: **Off**';//\nMP3 ID3 Title: **' + id3tag + '**'; 
-	var altz = '';
-}
+	if(osc == 1){
+		var infoid3 = '\nOscilloscope Video Rendering: **' + oscinfo + '**'; 
+		var altz = '\n' + currentcrr;
+	} else { 
+		var infoid3 = '\nOscilloscope Video Rendering: **Off**';//\nMP3 ID3 Title: **' + id3tag + '**'; 
+		var altz = '';
+	}
 
-if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
-	var info = '\n\nLength: **' + InfoLoop + ' Seconds**\n' + 'Track No.: **' + InfoSubs + '**' + infoid3;
-} else if(RenderMode == '6'){
-	var info = '\n\nSoundfont: **' + sfsf + '**' + infoid3;
-} else if(RenderMode == '8'){
-	var info = '\n\n';// + '\nMP3 ID3 Title: **' + id3tag + '**';
-} else if(RenderMode == '5'){
-	var info = '\n\nLength: **' + InfoLoop + ' Seconds**' + infoid3;
-} else if(RenderMode == '7'){
-	var info = '\n\nLength: **' + InfoLoop + '**\nOPL3 Bank: **' + args[1].toString() + '**' + infoid3;
-} else {
-	var info = '\n\nLoops: **' + InfoLoop + '**\nSubsong Number: **' + InfoSubs + '**' + infoid3;
-}
-				if(RenderMode == '2'){ var currentfnncarg = currentsid;} //else { var currentfnncarg = currentsid;}
+	if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
+		var info = '\n\nLength: **' + InfoLoop + ' Seconds**\n' + 'Track No.: **' + InfoSubs + '**' + infoid3;
+	} else if(RenderMode == '6'){
+		var info = '\n\nSoundfont: **' + sfsf + '**' + infoid3;
+	} else if(RenderMode == '8'){
+		var info = '\n\n';
+	} else if(RenderMode == '5'){
+		var info = '\n\nLength: **' + InfoLoop + ' Seconds**' + infoid3;
+	} else if(RenderMode == '7'){
+		var info = '\n\nLength: **' + InfoLoop + '**\nOPL3 Bank: **' + args[1].toString() + '**' + infoid3;
+	} else {
+		var info = '\n\nLoops: **' + InfoLoop + '**\nSubsong Number: **' + InfoSubs + '**' + infoid3;
+	}
+				if(RenderMode == '2'){ var currentfnncarg = currentsid;}
 				else if(RenderMode == '3'){ var currentfnncarg = currentvgm;}
 				else if(RenderMode == '5'){ var currentfnncarg = currentvgm + '\n' + currentym;}
 				else if(RenderMode == '4'){ var currentfnncarg = currentfms + '\n' + currentvgm;}
@@ -535,7 +515,7 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 									message.channel.send(userPing + nofileErr + '\n> Defined error : Compression failed!');
 									execSync('fur2mp3reset.bat');
 									return;
-								}//{ 
+								}
 								if(RenderMode == '8'){
 									message.reply({
 										content: gwavs,
@@ -548,11 +528,11 @@ if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 									});
 								}
 							execSync('fur2mp3reset.bat');
-							return;//}
+							return;
 	
 				});
 		} else {
-			   message.channel.send(usage, {split:true});
+			   message.reply(usage, {split:true});
 			   return;
     }}
 	});
