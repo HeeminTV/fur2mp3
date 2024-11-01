@@ -1,3 +1,4 @@
+@echo off
 ::chcp 437
 :: =---------------------------------------------------------=
 ::                                .::.                                             
@@ -22,17 +23,12 @@
 :: 
 :: art by https://github.com/architectnt
 :: =---------------------------------------------------------=
-@echo ON
 if exist temp_norender.txt (
 copy temp_oscout.mp4 drivecopy.mp4
 exit /b
 )
 if exist temp_osccodec.txt (
-::FUUUUUUUUUUUUUUUUUUUUUUUCLK
-::FUCK
-::WHY ITI WONKT WORK
 	set /p codec=<temp_osccodec.txt
-::)
 ) else (
 	set "codec=libx265"
 )
@@ -40,7 +36,7 @@ if exist temp_osccodec.txt (
 
 for /f "usebackq delims=" %%A in (`powershell -Command ^
     "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
-    "[Console]::WriteLine($json.settings.GPU) } catch { [Console]::WriteLine('')" }`) do set "gpu=%%A"
+    "[Console]::WriteLine($json.settings.GPU) } catch { [Console]::WriteLine('4') }"`) do set "gpu=%%A"
 
 	::set "hwaccel=-hwaccel_output_format vulkan"
 	if "%gpu%"=="1" set "hwaccel=-hwaccel_output_format cuda" && set "gpu3=nvenc"
@@ -120,8 +116,6 @@ SET "target_video_bitrate=%result%"
 
 echo %target_audio_bitrate% audio, %target_video_bitrate% video
 SET "passString="
-::if "%twopass%" == "true" (
-    ::echo Two-Pass Encoding
     ffmpeg ^
         -y ^
 		-hide_banner -loglevel error ^
@@ -133,8 +127,6 @@ SET "passString="
         -an ^
         -f mp4 ^
         nul
-::    SET "passString=-pass 2"
-::) else ( echo Single-Pass Encoding )
 ffmpeg ^
     %hwaccel% ^
     -i "%~1" ^

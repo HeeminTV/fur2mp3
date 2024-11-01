@@ -1,13 +1,5 @@
 @echo off
 setlocal enabledelayedexpansion
-for /f "usebackq delims=" %%A in (`powershell -Command ^
-    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
-    "[Console]::WriteLine($json.settings.GPU) } catch { [Console]::WriteLine('')" }`) do set "GPU=%%A"
-	if "%gpu%"=="1" set "gpu2=h264_nvenc" && set "hwaccel=-hwaccel_output_format cuda"
-	if "%gpu%"=="2" set "gpu2=h264_qsv" && set "hwaccel=-hwaccel_output_format qsv"
-	if "%gpu%"=="3" set "gpu2=h264_amf" && set "hwaccel=-hwaccel_output_format vulkan"
-	if "%gpu%"=="4" set "gpu2=libx264 -preset ultrafast" && set "hwaccel="
-
 set "filename=%~n2"
 set "directory=%~dp2"
 set "required=%~dp1"
@@ -38,7 +30,15 @@ echo.  responsiveness: 0.5 >> "%filename%.yaml"
 echo.  temp_falloff: 0.5 >> "%filename%.yaml"
 echo.  reset_below: 0.3 >> "%filename%.yaml"
 echo.  pitch_tracking: ^^!SpectrumConfig {} >> "%filename%.yaml"
-echo.default_label: ^^!DefaultLabel FileName >> "%filename%.yaml"
+
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.oscilloscope.label) } catch { [Console]::WriteLine('false') }"`) do set "osciLabel=%%A"
+	
+if "%osciLabel%"=="true" (
+	echo.default_label: ^^!DefaultLabel FileName >> "%filename%.yaml"
+)
+
 echo.layout: ^^!LayoutConfig >> "%filename%.yaml"
 echo.  orientation: v >> "%filename%.yaml"
 echo.  nrows: >> "%filename%.yaml"
@@ -47,7 +47,12 @@ echo.  stereo_orientation: v >> "%filename%.yaml"
 echo.render: ^^!RendererConfig >> "%filename%.yaml"
 echo.  width: 1920 >> "%filename%.yaml"
 echo.  height: 1080 >> "%filename%.yaml"
-echo.  line_width: 1.5 >> "%filename%.yaml"
+
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.oscilloscope.lineWidth) } catch { [Console]::WriteLine('2') }"`) do set "lineWidth=%%A"
+	
+echo.  line_width: %lineWidth% >> "%filename%.yaml"
 echo.  line_outline_width: 0.0 >> "%filename%.yaml"
 echo.  grid_line_width: 1.0 >> "%filename%.yaml"
 echo.  bg_color: '#000000' >> "%filename%.yaml"
@@ -86,20 +91,14 @@ echo.  antialiasing: true >> "%filename%.yaml"
 echo.  res_divisor: 1.5 >> "%filename%.yaml"
 echo.ffmpeg_cli: ^^!FFmpegOutputConfig >> "%filename%.yaml"
 echo.  path: >> "%filename%.yaml"
-echo.  video_template: -c:v %gpu2% %hwaccel% -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
-
+echo.  video_template: -c:v libx264 -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
 echo.master_audio: '%directory%%filename%.wav' >> "%filename%.yaml"
 echo.channels: >> "%filename%.yaml"
-rem setlocal enabledelayedexpansion
 
 REM 파워쉘을 사용하여 숫자 기반 정렬 후 출력
 for /f "tokens=*" %%f in ('powershell -command "Get-ChildItem -File %~1 | Sort-Object { [int]($_.Name -replace '[^0-9]', '') } | ForEach-Object { $_.Name }"') do (
-    rem echo %%f
 	echo.- ^^!ChannelConfig >> "%filename%.yaml"
 	echo.  wav_path: '%required%%%f' >> "%filename%.yaml"
 )
 
-::endlocal
-echo "%filename%.yaml"
-echo video_template: %hwaccel% -c:v %gpu2% -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart
 endlocal
