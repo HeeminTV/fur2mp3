@@ -112,13 +112,9 @@ bot.on('ready', async () => {
 
 
 
-		   var userPing = '<@' + message.author.id + '>';
+	var userPing = '<@' + message.author.id + '>';
 		//시발 그럼 가볼까ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ
-		
-		
-			const filePath = 'temp_furrendering.txt';
-    
-    if (fs.existsSync(filePath)) {
+    if (fs.existsSync('temp_furrendering.txt')) {
 		if(fs.existsSync('temp_osccodec.txt')){
 			if(fs.existsSync('output_temp_oscout 20MB.mp4')){//f
 			var percentage1 = getFilesizeInBytes('output_temp_oscout 20MB.mp4') / (1024*1024);
@@ -480,14 +476,40 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 	} else {
 		var info = '\n\nLoops: **' + InfoLoop + '**\nSubsong Number: **' + InfoSubs + '**' + infoid3;
 	}
-				if(RenderMode == '2'){ var currentfnncarg = currentsid;}
-				else if(RenderMode == '3'){ var currentfnncarg = currentvgm;}
-				else if(RenderMode == '5'){ var currentfnncarg = currentvgm + '\n' + currentym;}
-				else if(RenderMode == '4'){ var currentfnncarg = currentfms + '\n' + currentvgm;}
-				else if(RenderMode == '6'){ var currentfnncarg = currentmid;}
-				else if(RenderMode == '7'){ var currentfnncarg = currentvgm + '\n' + currentm2v;}
-				else if(RenderMode == '8'){ var currentfnncarg = currentzxt;}
-				else { var currentfnncarg = currentfnnc; }
+
+				switch (RenderMode) {
+					case 2:
+						var currentfnncarg = currentsid;
+						break;
+					
+					case 3:
+						var currentfnncarg = currentvgm;
+						break;
+						
+					case 4:
+						var currentfnncarg = currentfms + '\n' + currentvgm;
+						break;
+						
+					case 5:
+						var currentfnncarg = currentvgm + '\n' + currentym;
+						break;
+						
+					case 6:
+						var currentfnncarg = currentmid;
+						break;
+						
+					case 7:
+						var currentfnncarg = currentvgm + '\n' + currentm2v;
+						break;
+						
+					case 8:
+						var currentfnncarg = currentzxt;
+						break;
+					
+					default:
+						var currentfnncarg = currentfnnc;
+				}
+				
 				fs.writeFileSync('temp_furrendering.txt', 'Rendering');
 				await sentMessage.edit(currentfnncarg + altz + '\nRendering started!' + info);
 					await exec(whattoexec + ' ' + opti.toString(), { stdio: []},(error, stdout, stderr) => { 

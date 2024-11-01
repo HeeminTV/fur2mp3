@@ -25,6 +25,11 @@ A powerful Discord bot that renders almost every chiptune format!
 		"midiMaxSize": "200000",
 		"defaultStatus": "corrscope.exe",
 		"GPU": "NVIDEA: 1, INTEL ARC: 2, RADEON: 3, OTHERS / SOFTWARE: 4"
+	},
+	
+	"oscilloscope": {
+		"label": "true",
+		"lineWidth": "2"
 	}
 }
 ```
@@ -35,6 +40,9 @@ A powerful Discord bot that renders almost every chiptune format!
   - `midiMaxSize` : Set the maximum size of `.mid` files
   - `defaultStatus` : Set the status message to use when the bot is in an idle state rather than rendering
   - `GPU` : Determines which GPU to use in oscilloscope rendering mode
+  
+  - `label` : "true" enables text labels in oscilloscope rendering, any other value disables them.
+  - `lineWidth` : Set line width when rendering oscilloscope
 
 # Things to know
 By default, when this bot starts, it copies all files inside `tobuild\` to `build\`. So you will need to modify `tobuild\index.js` and not `build\index.js`.
