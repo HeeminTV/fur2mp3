@@ -42,7 +42,7 @@ goto exists
 del /q temp_oscout.mp4
 echo Creating the `.yaml` file > temp_furrendering.txt
 
-call seperatedwavsetup.bat
+rem seperatedwavsetup.bat
 powershell -command "Get-ChildItem 'fur2osc\*.wav' | ForEach-Object { Rename-Item $_.FullName -NewName ($_.Name -replace 'temp_fmsnsf - ','')}"
 call YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\masterout.wav"
 echo Rendering to an oscilloscope video > temp_furrendering.txt 

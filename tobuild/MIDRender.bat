@@ -9,10 +9,6 @@ if exist "temp_sf2.sf2" (
 	set sf=SC-55.sf2
 )
 
-rem midisplit\src\bin\Release\netcoreapp3.1\win-x64\publish
-rem if exist "temp_mid.mid" (
-:: 사용법 : MIDRender.bat <OPL3 뱅크(-1로 일반 모드 사용)> 
-:: 기본 미디 렌더링 모드에서:
 IF "%~1"=="-1" (
 	echo Rendering `.mid` to `.wav` > temp_furrendering.txt
 	"TiMidity++-2.15.0\timidity.exe" temp_mid.mid --config-string="soundfont %sf%" -Ow

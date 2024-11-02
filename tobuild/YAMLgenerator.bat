@@ -1,4 +1,17 @@
-@echo off
+@echo ON
+:: seperatedwavsetup.bat section
+setlocal
+
+for %%f in ("%~1") do (
+    ffmpeg -i "%%f" -af silencedetect=n=-50dB:d=1 -f null - 2>temp.log
+    findstr /i "silence_end" temp.log >nul
+    if not errorlevel 1 del "%%f"
+)
+
+del temp.log
+
+endlocal
+:: YAMLgenerator.bat section
 setlocal enabledelayedexpansion
 set "filename=%~n2"
 set "directory=%~dp2"

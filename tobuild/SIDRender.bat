@@ -11,7 +11,7 @@ echo Seperating audio channels > temp_furrendering.txt
 sidplayfp.exe --delay=0 -u2 -u3 %* -w"fur2osc/SID #1.wav" temp_sid.sid 
 sidplayfp.exe --delay=0 -u1 -u3 %* -w"fur2osc/SID #2.wav" temp_sid.sid 
 sidplayfp.exe --delay=0 -u1 -u2 %* -w"fur2osc/SID #3.wav" temp_sid.sid 
-CALL seperatedwavsetup.bat
+rem seperatedwavsetup.bat
 sidplayfp.exe --delay=0 %* -w"fur2osc/master/temp_fur2oscmst.wav" temp_sid.sid 
    
 ) ELSE (

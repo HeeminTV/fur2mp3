@@ -378,12 +378,11 @@ bot.on('ready', async () => {
 				var FurSubsongVaule = (Number(args[1]) - 1);
 				var InfoSubs = args[1];
 			}
-// else subs = arg[1].toString();}//}
-if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ').includes("'")){ message.channel.send(usage, {split:true});return;}//|||
+
+			if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ').includes("'")){ message.channel.send(usage, {split:true});return;}
 
 				const sentMessage = await message.reply('Downloading...');
-				execSync('fur2mp3reset.bat');
-				execSync('del /q output_*');
+				execSync('fur2mp3reset.bat && del /q output_*');
 
 			if(RenderMode == '2'){
 				var options = {filename: "temp_sid.sid"};//var options = {
@@ -404,10 +403,9 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 				//var opti = '';
 				var whattoexec = 'ZXTRender.bat';
 				var fname = TargetMessage.attachments.first().name;
-				var ext1 = fname.toString().split('.');//var sendfilelist = ['zxtzxt.mp3'];
+				var ext1 = fname.toString().split('.');
 				var ext2 = ext1.pop();
-				var options = {filename: 'temp_zxt.' + ext2};//};
-				//message.channel.send('```\n' + fname + ext1 + ext2 + options.filename.toString() + '```');
+				var options = {filename: 'temp_zxt.' + ext2};
 				var opti = options.filename.toString();
 			
 			} else if(RenderMode == '6'){
@@ -415,11 +413,11 @@ if(args.join(' ').includes('.') || args.join(' ').includes('"')|| args.join(' ')
 				//var opti = '';
 				var opti = args[0] == null || args[0] == '' ? '-1' : FurLoopVaule;
 				var options = {filename: "temp_mid.mid"};
-				if(TargetMessage.attachments.array()[1] && TargetMessage.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){//if(TargetMessage.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){
+				if(TargetMessage.attachments.toJSON()[1] && TargetMessage.attachments.toJSON()[1].name.toString().toLowerCase().endsWith('.sf2')){//if(TargetMessage.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){
 					if(fs.existsSync('temp_sf2.sf2')){fs.unlinkSync('temp_sf2.sf2');}
-					var sfsf = TargetMessage.attachments.array()[1].name.toString();
+					var sfsf = TargetMessage.attachments.toJSON()[1].name.toString();
 					//var sfav = 1;
-					await get(TargetMessage.attachments.array()[1].url,{filename: "temp_sf2.sf2"});
+					await get(TargetMessage.attachments.toJSON()[1].url,{filename: "temp_sf2.sf2"});
 				} else {
 					var sfsf = 'SC-55.sf2';
 				}
