@@ -1,17 +1,4 @@
-@echo ON
-:: seperatedwavsetup.bat section
-setlocal
-
-for %%f in ("%~1") do (
-    ffmpeg -i "%%f" -af silencedetect=n=-50dB:d=1 -f null - 2>temp.log
-    findstr /i "silence_end" temp.log >nul
-    if not errorlevel 1 del "%%f"
-)
-
-del temp.log
-
-endlocal
-:: YAMLgenerator.bat section
+@echo Off
 setlocal enabledelayedexpansion
 set "filename=%~n2"
 set "directory=%~dp2"
@@ -58,8 +45,18 @@ echo.  nrows: >> "%filename%.yaml"
 echo.  ncols: >> "%filename%.yaml"
 echo.  stereo_orientation: v >> "%filename%.yaml"
 echo.render: ^^!RendererConfig >> "%filename%.yaml"
-echo.  width: 1920 >> "%filename%.yaml"
-echo.  height: 1080 >> "%filename%.yaml"
+
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.oscilloscope.resWidth) } catch { [Console]::WriteLine('1280') }"`) do set "xres=%%A"
+	
+echo.  width: %xres% >> "%filename%.yaml"
+
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.oscilloscope.resHeight) } catch { [Console]::WriteLine('1280') }"`) do set "yres=%%A"
+	
+echo.  height: %yres% >> "%filename%.yaml"
 
 for /f "usebackq delims=" %%A in (`powershell -Command ^
     "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
@@ -110,8 +107,13 @@ echo.channels: >> "%filename%.yaml"
 
 REM 파워쉘을 사용하여 숫자 기반 정렬 후 출력
 for /f "tokens=*" %%f in ('powershell -command "Get-ChildItem -File %~1 | Sort-Object { [int]($_.Name -replace '[^0-9]', '') } | ForEach-Object { $_.Name }"') do (
-	echo.- ^^!ChannelConfig >> "%filename%.yaml"
-	echo.  wav_path: '%required%%%f' >> "%filename%.yaml"
+	for /f "delims=" %%a in ('node.exe MeanAmplitudeCaculate.js %required%%%f') do (
+		set trueorfalse=%%a
+		if not "!trueorfalse!"=="false" (
+			echo.- ^^!ChannelConfig >> "%filename%.yaml"
+			echo.  wav_path: '%required%%%f' >> "%filename%.yaml"
+		)
+	)
 )
 
 endlocal

@@ -11,6 +11,8 @@
 	
 	"oscilloscope": {
 		"label": "true",
-		"lineWidth": "2"
+		"lineWidth": "2",
+		"resWidth": "1920",
+		"resHeight": "1080"
 	}
 }

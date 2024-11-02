@@ -323,7 +323,7 @@ bot.on('ready', async () => {
 						return;
 					} else {
 						var FurLoopVaule = args[0];
-						var InfoLoop = args[0] = '0' ? 'No Loops' : args[0];
+						var InfoLoop = args[0] == '0' ? 'No Loops' : args[0];
 					}
 				} else if(RenderMode == '6'){
 					if(Number(args[0]) <= -2){
@@ -433,11 +433,8 @@ bot.on('ready', async () => {
 				var options = {filename: "temp_furinput.fur"};
 			}
 			await get(TargetMessage.attachments.first().url,options);
-				/*if(sfav == 1){//[[[[
-			await get(TargetMessage.attachments.array()[1].url,{filename: "temp_sf2.sf2"});
-			}*/
 
-					if(args[2] == null){//message.channel.send('asfasf');}
+					if(args[2] == null){
 						//var increasing = '** **'; 
 						var osc = 0;
 						var oscinfo = 'Off';

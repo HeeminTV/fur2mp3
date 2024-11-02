@@ -29,7 +29,9 @@ A powerful Discord bot that renders almost every chiptune format!
 	
 	"oscilloscope": {
 		"label": "true",
-		"lineWidth": "2"
+		"lineWidth": "2",
+		"resWidth": "1920",
+		"resHeight": "1080"
 	}
 }
 ```
@@ -40,9 +42,11 @@ A powerful Discord bot that renders almost every chiptune format!
   - `midiMaxSize` : Set the maximum size of `.mid` files
   - `defaultStatus` : Set the status message to use when the bot is in an idle state rather than rendering
   - `GPU` : Determines which GPU to use in oscilloscope rendering mode
-  
-  - `label` : "true" enables text labels in oscilloscope rendering, any other value disables them.
+  ** **
+  - `label` : "true" enables text labels in oscilloscope rendering, any other value disables them
   - `lineWidth` : Set line width when rendering oscilloscope
+  - `resWidth` : Determines the width of the video to be output
+  - `resHeight` : Determines the height of the video to be output
 
 # Things to know
 By default, when this bot starts, it copies all files inside `tobuild\` to `build\`. So you will need to modify `tobuild\index.js` and not `build\index.js`.
