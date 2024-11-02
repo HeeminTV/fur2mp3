@@ -7,15 +7,15 @@ mkdir fur2osc && mkdir fur2osc\master
 
    rem del /q "output_temp_oscout 20MB.mp4"
    echo Seperating audio channels > temp_furrendering.txt 
-   furnace.exe -noreport %* -outmode perchan -output fur2osc\temp_fur2wavwav.wav temp_furinput.fur
+   furnace.exe -noreport -loglevel error %* -outmode perchan -output fur2osc\temp_fur2wavwav.wav temp_furinput.fur
    echo Rendering master audio > temp_furrendering.txt 
-   furnace.exe -noreport %* -output fur2osc\master\temp_fur2oscmst.wav temp_furinput.fur
+   furnace.exe -noreport -loglevel error %* -output fur2osc\master\temp_fur2oscmst.wav temp_furinput.fur
    if not exist "fur2osc\master\temp_fur2oscmst.wav" (
 echo `furnace.exe` did not create any `.wav` files. This is probably because the file is corrupted. > temp_fur2mp3error.txt && goto exists
 )
    
 ) ELSE (
-furnace.exe -noreport %* -output temp_fur2wavwav.wav temp_furinput.fur
+furnace.exe -noreport -loglevel error %* -output temp_fur2wavwav.wav temp_furinput.fur
    if not exist "temp_fur2wavwav.wav" (
 echo `furnace.exe` did not create the `.wav` file. This is probably because the file is corrupted. > temp_fur2mp3error.txt && goto exists
 )

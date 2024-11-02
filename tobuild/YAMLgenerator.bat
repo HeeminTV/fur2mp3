@@ -1,4 +1,4 @@
-@echo Off
+@echo OFF
 setlocal enabledelayedexpansion
 set "filename=%~n2"
 set "directory=%~dp2"
@@ -106,14 +106,18 @@ echo.master_audio: '%directory%%filename%.wav' >> "%filename%.yaml"
 echo.channels: >> "%filename%.yaml"
 
 REM 파워쉘을 사용하여 숫자 기반 정렬 후 출력
+set executedFlag=0
 for /f "tokens=*" %%f in ('powershell -command "Get-ChildItem -File %~1 | Sort-Object { [int]($_.Name -replace '[^0-9]', '') } | ForEach-Object { $_.Name }"') do (
 	for /f "delims=" %%a in ('node.exe MeanAmplitudeCaculate.js %required%%%f') do (
 		set trueorfalse=%%a
 		if not "!trueorfalse!"=="false" (
 			echo.- ^^!ChannelConfig >> "%filename%.yaml"
 			echo.  wav_path: '%required%%%f' >> "%filename%.yaml"
+			set executedFlag=1
 		)
 	)
 )
+
+if not %executedFlag%==1 echo No active channels were found in the file you sent! (all channels are quiet) > temp_fur2mp3error.txt && exit /b
 
 endlocal
