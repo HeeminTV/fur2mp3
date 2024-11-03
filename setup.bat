@@ -43,7 +43,7 @@ rem exit /b
 )
 
 if not exist tobuild\ffprobe.exe (
-echo Could not find ffmpeg set. Downloading...
+echo Could not find the ffmpeg set. Downloading...
 
 if /i "!ANSWER!" == "y" (
 powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip','temp\ffmpeg-master-latest-win64-gpl-shared.zip')"
@@ -99,12 +99,12 @@ rem exit /b
 )
 )
 
-if not exist tobuild\	.exe (
+if not exist tobuild\sidplayfp.exe (
 echo Could not find "sidplayfp.exe". Downloading...
 
 if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/libsidplayfp/sidplayfp/releases/download/v2.10.0/sidplayfp-2.10.0-lib2.10.1-w64.zip','temp\sidplayfp-2.9.0-lib2.9.0-w64.zip')"
-powershell expand-archive 'temp\sidplayfp-2.10.0-lib2.10.1-w64.zip' 'temp\sidplayfp-2.10.0-lib2.10.1-w64'
+powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/libsidplayfp/sidplayfp/releases/download/v2.10.0/sidplayfp-2.10.0-lib2.10.1-w64.zip','.\temp\sidplayfp-2.9.0-lib2.9.0-w64.zip')"
+powershell expand-archive '.\temp\sidplayfp-2.9.0-lib2.9.0-w64.zip' 'temp\sidplayfp-2.10.0-lib2.10.1-w64'
 move /y temp\sidplayfp-2.10.0-lib2.10.1-w64\sidplayfp-2.10.0-lib2.10.1-w64\sidplayfp.exe tobuild\sidplayfp.exe
 ) else (
 rem exit /b
@@ -116,9 +116,9 @@ if not exist "TiMidity++-2.15.0\timidity.exe" (
 echo Could not find "timidity.exe". Downloading...
 
 if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://jaist.dl.sourceforge.net/project/timidity/TiMidity%2B%2B/TiMidity%2B%2B-2.15.0/TiMidity%2B%2B-2.15.0-w32.zip?viasf=1','temp\TiMidity++-2.15.0-w32.zip')"
+powershell "(New-Object System.Net.WebClient).DownloadFile('https://drive.usercontent.google.com/u/0/uc?id=1hy6hXwne7hmTqdpJLcXZfGNvdohGTMh3&export=download','temp\TiMidity++-2.15.0-w32.zip')"
 powershell expand-archive 'temp\TiMidity++-2.15.0-w32.zip' 'temp\TiMidity++-2.15.0-w32'
-move /y temp\TiMidity++-2.15.0-w32 tobuild\TiMidity++-2.15.0
+move /y temp\TiMidity++-2.15.0-w32\TiMidity++-2.15.0 tobuild\TiMidity++-2.15.0
 ) else (
 rem exit /b
 )
