@@ -101,10 +101,19 @@ echo.  antialiasing: true >> "%filename%.yaml"
 echo.  res_divisor: 1.5 >> "%filename%.yaml"
 echo.ffmpeg_cli: ^^!FFmpegOutputConfig >> "%filename%.yaml"
 echo.  path: >> "%filename%.yaml"
-echo.  video_template: -c:v libx264 -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
+
+for /f "usebackq delims=" %%A in (`powershell -Command ^
+    "try { $json = Get-Content -Raw -Path '..\settings.json' | ConvertFrom-Json; " ^
+    "[Console]::WriteLine($json.settings.GPU) } catch { [Console]::WriteLine('4') }"`) do set "gpu=%%A"
+if "!gpu!"=="1" set "cvgpu=h264_nvenc"
+if "!gpu!"=="2" set "cvgpu=h264_qsv"
+if "!gpu!"=="3" set "cvgpu=h264_amf"
+if "!gpu!"=="4" set "cvgpu=libx264"
+	
+echo.  video_template: -c:v !cvgpu! -crf 18 -pix_fmt yuv420p -vf scale=out_color_matrix=bt709 -color_range 1 -colorspace bt709 -color_trc bt709 -color_primaries bt709 -movflags faststart >> "%filename%.yaml"
 echo.master_audio: '%directory%%filename%.wav' >> "%filename%.yaml"
 echo.channels: >> "%filename%.yaml"
-
+echo !cvgpu!
 REM 파워쉘을 사용하여 숫자 기반 정렬 후 출력
 set executedFlag=0
 for /f "tokens=*" %%f in ('powershell -command "Get-ChildItem -File %~1 | Sort-Object { [int]($_.Name -replace '[^0-9]', '') } | ForEach-Object { $_.Name }"') do (
