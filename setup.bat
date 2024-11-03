@@ -99,13 +99,13 @@ rem exit /b
 )
 )
 
-if not exist tobuild\sidplayfp.exe (
+if not exist tobuild\	.exe (
 echo Could not find "sidplayfp.exe". Downloading...
 
 if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/libsidplayfp/sidplayfp/releases/download/v2.9.0/sidplayfp-2.9.0-lib2.9.0-w64.zip','temp\sidplayfp-2.9.0-lib2.9.0-w64.zip')"
-powershell expand-archive 'temp\sidplayfp-2.9.0-lib2.9.0-w64.zip' 'temp\sidplayfp-2.9.0-lib2.9.0-w64'
-move /y temp\sidplayfp-2.9.0-lib2.9.0-w64\sidplayfp-2.9.0-lib2.9.0-w64\sidplayfp.exe tobuild\sidplayfp.exe
+powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/libsidplayfp/sidplayfp/releases/download/v2.10.0/sidplayfp-2.10.0-lib2.10.1-w64.zip','temp\sidplayfp-2.9.0-lib2.9.0-w64.zip')"
+powershell expand-archive 'temp\sidplayfp-2.10.0-lib2.10.1-w64.zip' 'temp\sidplayfp-2.10.0-lib2.10.1-w64'
+move /y temp\sidplayfp-2.10.0-lib2.10.1-w64\sidplayfp-2.10.0-lib2.10.1-w64\sidplayfp.exe tobuild\sidplayfp.exe
 ) else (
 rem exit /b
 )

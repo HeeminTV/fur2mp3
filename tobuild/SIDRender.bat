@@ -8,9 +8,10 @@ mkdir fur2osc && mkdir fur2osc\master
 rem del /q "output_temp_oscout 20MB.mp4"
 echo Seperating audio channels > temp_furrendering.txt 
 
-sidplayfp.exe --delay=0 -u2 -u3 %* -w"fur2osc/SID #1.wav" temp_sid.sid 
-sidplayfp.exe --delay=0 -u1 -u3 %* -w"fur2osc/SID #2.wav" temp_sid.sid 
-sidplayfp.exe --delay=0 -u1 -u2 %* -w"fur2osc/SID #3.wav" temp_sid.sid 
+sidplayfp.exe --delay=0 -u2 -u3 -g1 %* -w"fur2osc/SID #1.wav" temp_sid.sid 
+sidplayfp.exe --delay=0 -u1 -u3 -g1 %* -w"fur2osc/SID #2.wav" temp_sid.sid 
+sidplayfp.exe --delay=0 -u1 -u2 -g1 %* -w"fur2osc/SID #3.wav" temp_sid.sid 
+sidplayfp.exe --delay=0 -u1 -u2 -u3 %* -w"fur2osc/SID PCM.wav" temp_sid.sid 
 rem seperatedwavsetup.bat
 sidplayfp.exe --delay=0 %* -w"fur2osc/master/temp_fur2oscmst.wav" temp_sid.sid 
    
@@ -36,7 +37,7 @@ if not exist "fur2osc\master\temp_fur2oscmst.wav" (
 
   del /q temp_oscout.mp4
   echo Creating the `.yaml` file > temp_furrendering.txt
-  call YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\temp_fur2oscmst.wav"
+  call YAMLgenerator.bat "fur2osc\*.wav" "fur2osc\master\temp_fur2oscmst.wav" 3
   echo Rendering to an oscilloscope video > temp_furrendering.txt 
   rem && rem p
   corrscope temp_fur2oscmst.yaml -r temp_oscout.mp4
