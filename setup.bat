@@ -124,28 +124,6 @@ rem exit /b
 )
 )
 
-::if not exist tobuild\oggdec.exe (
-::echo Could not find "oggdec.exe". Downloading...
-
-::if /i "!ANSWER!" == "y" (
-::powershell "(New-Object System.Net.WebClient).DownloadFile('https://www.rarewares.org/files/ogg/oggdecV1.10.1.zip','temp\oggdecV1.10.1.zip')"
-::powershell expand-archive 'temp\oggdecV1.10.1.zip' 'tobuild'
-::) else (
-::rem exit /b
-::)
-::)
-
-::if not exist tobuild\id3-081w\id3.exe (
-::echo Could not find "id3.exe". Downloading...
-
-::if /i "!ANSWER!" == "y" (
-::powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/squell/id3/releases/download/0.81/id3-081w.zip','temp\id3-081w.zip')"
-::powershell expand-archive 'temp\id3-081w.zip' 'tobuild\id3-081w'
-::) else (
-::rem exit /b
-::)
-::)
-
 if not exist tobuild\midi2vgm_opl3_windows_x86_64\midi2vgm_opl3.exe (
 echo Could not find "midi2vgm_opl3.exe". Downloading...
 
@@ -153,17 +131,6 @@ if /i "!ANSWER!" == "y" (
 powershell "(New-Object System.Net.WebClient).DownloadFile('https://github.com/SudoMaker/midi2vgm/releases/download/v0.0.1/midi2vgm_opl3_windows_x86_64.7z','temp\midi2vgm_opl3_windows_x86_64.7z')"
 rem powershell expand-archive 'temp\id3-081w.zip' 'tobuild\id3-081w'
 temp\7zr.exe x -o"tobuild\midi2vgm_opl3_windows_x86_64" temp\midi2vgm_opl3_windows_x86_64.7z
-) else (
-rem exit /b
-)
-)
-
-if not exist tobuild\normalize.exe (
-echo Could not find "normalize.exe". Downloading...
-
-if /i "!ANSWER!" == "y" (
-powershell "(New-Object System.Net.WebClient).DownloadFile('https://neon1.net/prog/normalize0253.zip','temp\normalize0253.zip')"
-powershell expand-archive 'temp\normalize0253.zip' 'tobuild'
 ) else (
 rem exit /b
 )

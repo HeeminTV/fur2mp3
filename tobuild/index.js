@@ -229,10 +229,8 @@ bot.on('ready', async () => {
 	const sendErr = ' An error occurred in the file transfer process. Try `$' + fur2mp3 + ' resend`.';
 	const nofileErr = ' An error occurred during rendering! Try again with other files!';//ua
 	const currentfnnc = 'Current Furnace Tracker Version : **0.6.7**'
-	const currentnormalize = 'Current normalize Version : **0.253**'
-	const currentsidalt = 'Current sidplayfp Version : **2.9.0**'
-	const currentsid = currentsidalt + '\n' + currentnormalize
-	const currentvgm = 'Current multidumper Version : **May 13, 2022**\nCurrent SoX Version : **14.4.2**\n' + currentnormalize;//MULT
+	const currentsid = 'Current sidplayfp Version : **2.9.0**'
+	const currentvgm = 'Current multidumper Version : **May 13, 2022**\nCurrent SoX Version : **14.4.2**';//MULT
 	const currentfms = 'Current FamiStudio Version : **4.2.1**';
 	//const currentmpt = 'Current openmpt123 Version : **0.7.9**';
 	const currentmid = 'Current TiMidity++ Version : **2.15.0**';//;';
@@ -242,7 +240,7 @@ bot.on('ready', async () => {
 	const currentcrr = 'Current corrscope Version : **0.9.1**';
 	const currentver = [
 	 currentfnnc,
-	 currentsidalt,
+	 currentsid,
 	 currentvgm,
 	 currentfms,
 	 currentmid,
@@ -276,7 +274,7 @@ bot.on('ready', async () => {
 				//message.channel.send('```\n' + Number(readfromfurcooldown) + Number(unixTimestamp()) + '```\n```' + (Number(fs.readFileSync('temp_furresendcooldown.txt')) - Number(unixTimestamp())) + '```');
 				if(fs.existsSync('output_furoutput.mp3')){ sendFilelist.push('output_furoutput.mp3');}if(fs.existsSync('output_temp_oscout 20MB.mp4')){ sendFilelist.push('output_temp_oscout 20MB.mp4');}
 				
-									if(!sendFilelist.length == 0){	try{ message.channel.send(userPing + ' Sending...'); await message.channel.send(userPing + ' ',{ files: sendFilelist }); fs.writeFileSync('temp_furresendcooldown.txt', (Number(unixTimestamp()) + Fur2mp3ResendCooldown).toString());return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}fs.writeFileSync('temp_furresendcooldown.txt', Number(unixTimestamp()) + 30);return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}
+									if(!sendFilelist.length == 0){	try{ message.channel.send(userPing + ' Sending...'); await message.channel.send({ content: userPing + ' ', files: sendFilelist }); fs.writeFileSync('temp_furresendcooldown.txt', (Number(unixTimestamp()) + Fur2mp3ResendCooldown).toString());return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}fs.writeFileSync('temp_furresendcooldown.txt', Number(unixTimestamp()) + 30);return;}catch(err){message.channel.send(userPing + sendErr);console.error(err);return;}//}
 					//else {return;}
 } else { message.channel.send(userPing + ' No output files found!');return;}//There are no
 }}
@@ -290,7 +288,7 @@ bot.on('ready', async () => {
 			
 			else if(AttachmentName.toLowerCase().endsWith('.mid')){
 				if( TargetMessage.attachments.first().size > midiMaxSize){
-					message.channel.send(userPing + ' Your file is too big! Maximum size is `' + (midiMaxSize / 1000) + 'KB` in MIDI mode!');
+					message.channel.send(userPing + ' Your file is too big! Maximum size is `' + (midiMaxSize / 1000000) + 'MB` in MIDI mode!');
 					return;
 				} else {
 					var RenderMode = 6;
@@ -416,7 +414,6 @@ bot.on('ready', async () => {
 				if(TargetMessage.attachments.toJSON()[1] && TargetMessage.attachments.toJSON()[1].name.toString().toLowerCase().endsWith('.sf2')){//if(TargetMessage.attachments.array()[1].name.toString().toLowerCase().endsWith('.sf2')){
 					if(fs.existsSync('temp_sf2.sf2')){fs.unlinkSync('temp_sf2.sf2');}
 					var sfsf = TargetMessage.attachments.toJSON()[1].name.toString();
-					//var sfav = 1;
 					await get(TargetMessage.attachments.toJSON()[1].url,{filename: "temp_sf2.sf2"});
 				} else {
 					var sfsf = 'SC-55.sf2';
@@ -461,13 +458,11 @@ bot.on('ready', async () => {
 	if(RenderMode == '2' || RenderMode == '3' || RenderMode == '4'){
 		var info = '\n\nLength: **' + InfoLoop + ' Seconds**\n' + 'Track No.: **' + InfoSubs + '**' + infoid3;
 	} else if(RenderMode == '6'){
-		var info = '\n\nSoundfont: **' + sfsf + '**' + infoid3;
+		var info = opti == '-1' ? `\n\nSoundfont: **${sfsf}**${infoid3}` : `\n\nOPL3 Bank: **${args[0].toString()}**${infoid3}`;
 	} else if(RenderMode == '8'){
 		var info = '\n\n';
 	} else if(RenderMode == '5'){
 		var info = '\n\nLength: **' + InfoLoop + ' Seconds**' + infoid3;
-	} else if(RenderMode == '7'){
-		var info = '\n\nLength: **' + InfoLoop + '**\nOPL3 Bank: **' + args[1].toString() + '**' + infoid3;
 	} else {
 		var info = '\n\nLoops: **' + InfoLoop + '**\nSubsong Number: **' + InfoSubs + '**' + infoid3;
 	}
@@ -490,11 +485,7 @@ bot.on('ready', async () => {
 						break;
 						
 					case 6:
-						var currentfnncarg = currentmid;
-						break;
-						
-					case 7:
-						var currentfnncarg = currentvgm + '\n' + currentm2v;
+						var currentfnncarg = opti == '-1' ? currentmid : `${currentvgm}\n${currentm2v}`;
 						break;
 						
 					case 8:
